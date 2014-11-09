@@ -17,7 +17,7 @@ public class DatabaseConnection {
     /*
    This method creates the data base dbConnection with Oracle 11g database
     */
-    private static void connectToDatabase() {
+    private static Connection connectToDatabase() {
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
 
@@ -43,6 +43,8 @@ public class DatabaseConnection {
         } else {
             System.out.println("Failed to connect the database");
         }
+        return dbConnection;
+
     }
 
     /*
