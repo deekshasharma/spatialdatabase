@@ -45,6 +45,20 @@ public class DatabaseConnection {
         }
     }
 
+    /*
+    This method closes the Connection to the database
+     */
+    protected void closeConnection()
+    {
+        try {
+            dbConnection.close();
+            System.out.println("Closing the connection");
+        } catch (SQLException e) {
+            System.out.println("Error in closing connection");
+            e.printStackTrace();
+        }
+    }
+
     public Connection getConnection()
     {
         return dbConnection;

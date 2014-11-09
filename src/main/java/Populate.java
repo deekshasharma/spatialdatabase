@@ -10,12 +10,14 @@ public class Populate {
 
     public static void main(String[] args) {
         if (args.length > 0) {
+
             String photographer = args[0];
             String photo = args[1];
             String building = args[2];
-//            populateDatabase(building);
-//            populateDatabase(photographer);
+            populateDatabase(building);
+            populateDatabase(photographer);
             populateDatabase(photo);
+            dbConnection.closeConnection();
 
         } else {
             System.out.println("Please enter the Command line arguments");
@@ -54,13 +56,6 @@ public class Populate {
             System.out.println("Error in reading file");
             e.printStackTrace();
         }
-        try {
-            connection.close();
-            System.out.println("Closing the connection");
-        } catch (SQLException e) {
-            System.out.println("Error in closing connection");
-            e.printStackTrace();
-        }
     }
 
     /*
@@ -78,11 +73,10 @@ public class Populate {
                 + yCoordinate + ","
                 + "null)," +
                 "null,null))";
-        System.out.println(insert);
         try {
             Statement statement = connection.createStatement();
             statement.executeUpdate(insert);
-            System.out.println("Inserted record in the table");
+            System.out.println("Inserted record in Photographer table");
         } catch (SQLException e) {
             System.out.println("Error due to executing query");
             e.printStackTrace();
@@ -106,7 +100,6 @@ public class Populate {
                 + yCoordinate + ","
                 + "null)," +
                 "null,null))";
-        System.out.println(insert);
         try {
             Statement statement = connection.createStatement();
             statement.executeUpdate(insert);
@@ -143,8 +136,6 @@ public class Populate {
                 + y1 +
                 ")))"
         );
-
-        System.out.println(insert);
         try {
             Statement statement = connection.createStatement();
             statement.executeUpdate(insert);
@@ -153,8 +144,5 @@ public class Populate {
             System.out.println("Error due to executing query");
             e.printStackTrace();
         }
-
     }
-
-
 }
