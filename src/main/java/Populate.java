@@ -2,83 +2,62 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.*;
-import java.util.Arrays;
 
 public class Populate {
-    private static final String username = "dsharma";
-    private static final String pass = "chulbul6";
-    private static Connection connection;
 
+    private static DatabaseConnection dbConnection = new DatabaseConnection();
+    private static Connection connection = dbConnection.getConnection();
 
     public static void main(String[] args) {
-        connectToDatabase();
-        String photographerFilePath = args[0];
-        String photoFilePath = args[1];
-//        populateDatabase(photographerFilePath);
-        populateDatabase(photoFilePath);
+        if (args.length > 0) {
+            String photographer = args[0];
+            String photo = args[1];
+            String building = args[2];
+//            populateDatabase(building);
+//            populateDatabase(photographer);
+            populateDatabase(photo);
+
+        } else {
+            System.out.println("Please enter the Command line arguments");
+
+        }
     }
+
 
     /*
-    This method creates the data base connection with Oracle 11g database
+    This method reads the data files and populates the tables
      */
-    private static void connectToDatabase() {
-        try {
-            Class.forName("oracle.jdbc.driver.OracleDriver");
-
-        } catch (ClassNotFoundException e) {
-            System.out.println("Oracle JDBC Driver missing!");
-            e.printStackTrace();
-        }
-        System.out.println("Oracle JDBC Driver Registered!");
-
-        try {
-
-            connection = DriverManager.getConnection(
-                    "jdbc:oracle:thin:@localhost:1521:db11g", username,
-                    pass);
-
-
-        } catch (SQLException e) {
-            System.out.println("Connection Failed! Check output console");
-            e.printStackTrace();
-        }
-        if (connection != null) {
-            System.out.println("Database connected");
-        } else {
-            System.out.println("Failed to connect the database");
-        }
-    }
-
-
     private static void populateDatabase(String filePath) {
         String line = "";
         try {
 
             BufferedReader br = new BufferedReader(new FileReader(filePath));
-            while ((line = br.readLine()) != null)
-            {
-                String[] eachRow = line.split(",\\s*");
+            while ((line = br.readLine()) != null) {
                 if (filePath.contains("photographer.xy")) {
-                    populatePhotographer(eachRow);
+                    String[] eachRow = line.split(",\\s*");
+                    executePhotographer(eachRow);
                 } else if (filePath.contains("photo.xy")) {
+                    String[] eachRow = line.split(",\\s*");
                     populatePhoto(eachRow);
-                } else {
+                } else if (filePath.contains("building.xy")) {
+                    String[] eachRow = line.split(",\\s*", 4);
                     populateBuilding(eachRow);
                 }
             }
             br.close();
-            try{connection.commit();}catch (SQLException e){
-                System.out.println("Error due to commit");}
+            try {
+                connection.commit();
+            } catch (SQLException e) {
+                System.out.println("Error due to commit");
+            }
         } catch (IOException e) {
             System.out.println("Error in reading file");
             e.printStackTrace();
         }
-        try
-        {
+        try {
             connection.close();
             System.out.println("Closing the connection");
-        }catch(SQLException e)
-        {
+        } catch (SQLException e) {
             System.out.println("Error in closing connection");
             e.printStackTrace();
         }
@@ -87,37 +66,46 @@ public class Populate {
     /*
     This method build and execute the query for photographer table
      */
-    private static void populatePhotographer(String[] photographerData) {
+    private static void executePhotographer(String[] photographerData) {
 
         String photographerId = photographerData[0];
         int xCoordinate = Integer.parseInt(photographerData[1]);
         int yCoordinate = Integer.parseInt(photographerData[2]);
-        String insert = "insert into photographer values(" + "'" + photographerId + "'" + "," + "MDSYS.SDO_POINT_TYPE(" +
-                xCoordinate + "," + yCoordinate + "," + "null" + "))";
+        String insert = "insert into photographer values(" + "'" + photographerId + "'" + ","
+                + "MDSYS.SDO_GEOMETRY(2001,null" + ","
+                + "MDSYS.SDO_POINT_TYPE("
+                + xCoordinate + ","
+                + yCoordinate + ","
+                + "null)," +
+                "null,null))";
         System.out.println(insert);
-        try
-        {
+        try {
             Statement statement = connection.createStatement();
             statement.executeUpdate(insert);
             System.out.println("Inserted record in the table");
-        }catch(SQLException e)
-        {
+        } catch (SQLException e) {
             System.out.println("Error due to executing query");
             e.printStackTrace();
         }
     }
 
+
     /*
     This method builds and execute the insert queries for photo table
      */
-
     private static void populatePhoto(String[] eachRow) {
         String photoId = eachRow[0];
         String photographerId = eachRow[1];
         int xCoordinate = Integer.parseInt(eachRow[2]);
         int yCoordinate = Integer.parseInt(eachRow[3]);
-        String insert = "insert into photo values(" + "'" + photoId + "'" + "," + "'" + photographerId + "'" + "," + "MDSYS.SDO_POINT_TYPE(" +
-                xCoordinate + "," + yCoordinate + "," + "null" + "))";
+        String insert = "insert into photo values(" + "'" + photoId + "'" + ","
+                + "'" + photographerId + "'" + ","
+                + "MDSYS.SDO_GEOMETRY(2001,null" + ","
+                + "MDSYS.SDO_POINT_TYPE("
+                + xCoordinate + ","
+                + yCoordinate + ","
+                + "null)," +
+                "null,null))";
         System.out.println(insert);
         try {
             Statement statement = connection.createStatement();
@@ -130,12 +118,41 @@ public class Populate {
     }
 
 
-   /*
-    This method builds and execute the insert queries for building table
-     */
+    /*
+     This method builds and execute the insert queries for building table
+      */
+    private static void populateBuilding(String[] eachRow) {
+        String buildingID = eachRow[0];
+        String buildingName = eachRow[1];
+        int numOfVertices = Integer.parseInt(eachRow[2]);
+        String coordinates = eachRow[3];
+        String[] lastCoordinates = coordinates.split(",\\s*", 3);
+        String x1 = lastCoordinates[0];
+        String y1 = lastCoordinates[1];
 
-    private static void populateBuilding(String[] eachRow)
-    {
+
+        String insert = ("insert into building values(" + "'" + buildingID + "'" + "," +
+                "'" + buildingName + "'" + ","
+                + numOfVertices + ","
+                + "MDSYS.SDO_GEOMETRY(" + "2003" + ","
+                + "null" + ","
+                + "null" + ","
+                + "SDO_ELEM_INFO_ARRAY(1,1003,1)" + ","
+                + "MDSYS.SDO_ORDINATE_ARRAY(" + coordinates + ","
+                + x1 + ","
+                + y1 +
+                ")))"
+        );
+
+        System.out.println(insert);
+        try {
+            Statement statement = connection.createStatement();
+            statement.executeUpdate(insert);
+            System.out.println("Inserted record in Building table");
+        } catch (SQLException e) {
+            System.out.println("Error due to executing query");
+            e.printStackTrace();
+        }
 
     }
 
