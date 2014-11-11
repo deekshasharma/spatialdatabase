@@ -51,6 +51,7 @@ public class FrontEnd {
     {
         background=new JLabel(new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"),SwingConstants.LEFT);
         background.setVerticalAlignment(SwingConstants.TOP);
+//        background.addMouseListener();
         frame.add(background);
         background.setLayout(new FlowLayout());
         frame.setVisible(true);

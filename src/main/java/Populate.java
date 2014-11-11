@@ -14,15 +14,37 @@ public class Populate {
             String photographer = args[0];
             String photo = args[1];
             String building = args[2];
+            deleteFirst();
             populateDatabase(building);
             populateDatabase(photographer);
             populateDatabase(photo);
             dbConnection.closeConnection();
 
+
         } else {
             System.out.println("Please enter the Command line arguments");
 
         }
+    }
+
+    private static void deleteFirst()
+    {
+        String deleteBuilding = "delete from building";
+        String deletePhoto = "delete from photo";
+        String deletePhotographer = "delete from photographer";
+        try
+        {
+            Statement statement = connection.createStatement();
+            statement.executeUpdate(deleteBuilding);
+            statement.executeUpdate(deletePhoto);
+            statement.executeUpdate(deletePhotographer);
+            statement.close();
+            System.out.println("Everything deleted");
+        }catch (SQLException e)
+        {
+            System.out.println("Error due to delete statement");
+        }
+
     }
 
 
@@ -76,6 +98,7 @@ public class Populate {
         try {
             Statement statement = connection.createStatement();
             statement.executeUpdate(insert);
+            statement.close(); ////////////
             System.out.println("Inserted record in Photographer table");
         } catch (SQLException e) {
             System.out.println("Error due to executing query");
@@ -103,6 +126,7 @@ public class Populate {
         try {
             Statement statement = connection.createStatement();
             statement.executeUpdate(insert);
+            statement.close();//////
             System.out.println("Inserted record in Photo table");
         } catch (SQLException e) {
             System.out.println("Error due to executing query");
@@ -139,6 +163,7 @@ public class Populate {
         try {
             Statement statement = connection.createStatement();
             statement.executeUpdate(insert);
+            statement.close(); ///////
             System.out.println("Inserted record in Building table");
         } catch (SQLException e) {
             System.out.println("Error due to executing query");
