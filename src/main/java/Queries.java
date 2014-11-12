@@ -1,6 +1,5 @@
 import oracle.spatial.geometry.JGeometry;
 import oracle.sql.STRUCT;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -23,24 +22,17 @@ public class Queries {
     protected List<ArrayList<Integer>> getAllBuildingGeo() {
         String buildingGeo = "select GEO from building";
         List<ArrayList<Integer>> allBuildingsGeo = new ArrayList<ArrayList<Integer>>();
-        List<Integer> coordinateList;
-
         try {
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(buildingGeo);
-            while (rs.next()) {
-                STRUCT st = (oracle.sql.STRUCT) rs.getObject(1);
-                JGeometry j_geom = JGeometry.load(st);
-                double[] coordinates = j_geom.getOrdinatesArray();
-                coordinateList = convertToIntegerList(coordinates);
-                allBuildingsGeo.add((ArrayList<Integer>) coordinateList);
-            }
+            allBuildingsGeo = processResultSet(rs);
             statement.close();
         } catch (SQLException e) {
             System.out.println("Error while retrieving data from Building table");
             e.printStackTrace();
         }
         dbConnection.closeConnection();
+        System.out.println(allBuildingsGeo);
         return allBuildingsGeo;
     }
 
@@ -58,24 +50,17 @@ public class Queries {
     }
 
     /*
-     This method returns the List of ArrayList containing photo coordinates
+     This method returns the List of ArrayList containing coordinates of all photos
      */
     protected List<ArrayList<Integer>> getAllPhotoGeo()
     {
-        List<Integer> coordinateList;
         List<ArrayList<Integer>> allPhotoGeo = new ArrayList<ArrayList<Integer>>();
         String photoGeo = "select PHOTOCOORDINATES from photo";
 
         try {
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(photoGeo);
-            while (rs.next()) {
-                STRUCT st = (oracle.sql.STRUCT) rs.getObject(1);
-                JGeometry j_geom = JGeometry.load(st);
-                double[] coordinates = j_geom.getOrdinatesArray();
-                coordinateList = convertToIntegerList(coordinates);
-                allPhotoGeo.add((ArrayList<Integer>) coordinateList);
-            }
+            allPhotoGeo = processResultSet(rs);
             statement.close();
         } catch (SQLException e) {
             System.out.println("Error while retrieving data from Photo table");
@@ -86,24 +71,17 @@ public class Queries {
     }
 
     /*
-     This method returns the List of ArrayList containing location of each photographer
+     This method returns the List of ArrayList containing location of all photographers
      */
     protected List<ArrayList<Integer>> getAllPhotographerGeo()
     {
-        List<Integer> coordinateList;
         List<ArrayList<Integer>> allPhotographerGeo = new ArrayList<ArrayList<Integer>>();
-        String photoGeo = "select PHOTOGRAPHERLOC from photo";
+        String photographerGeo = "select PHOTOGRAPHERLOC from photo";
 
         try {
             Statement statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery(photoGeo);
-            while (rs.next()) {
-                STRUCT st = (oracle.sql.STRUCT) rs.getObject(1);
-                JGeometry j_geom = JGeometry.load(st);
-                double[] coordinates = j_geom.getOrdinatesArray();
-                coordinateList = convertToIntegerList(coordinates);
-                allPhotographerGeo.add((ArrayList<Integer>) coordinateList);
-            }
+            ResultSet rs = statement.executeQuery(photographerGeo);
+            allPhotographerGeo = processResultSet(rs);
             statement.close();
         } catch (SQLException e) {
             System.out.println("Error while retrieving data from Photographer table");
@@ -113,6 +91,30 @@ public class Queries {
         return allPhotographerGeo;
     }
 
+    /*
+    This method takes the ResultSet as input and returns the combined list of all coordinates for the tables.
+     */
+    private List<ArrayList<Integer>> processResultSet(ResultSet rs)
+    {
+        List<Integer> coordinateList;
+        List<ArrayList<Integer>> allCoordinates = new ArrayList<ArrayList<Integer>>();
+
+        try{
+            while (rs.next()) {
+                STRUCT st = (oracle.sql.STRUCT) rs.getObject(1);
+                JGeometry j_geom = JGeometry.load(st);
+                double[] coordinates = j_geom.getOrdinatesArray();
+                coordinateList = convertToIntegerList(coordinates);
+                allCoordinates.add((ArrayList<Integer>) coordinateList);
+            }
+        } catch(SQLException e)
+        {
+            System.out.println("Error while processing ResultSet");
+            e.printStackTrace();
+        }
+        return allCoordinates;
+
+    }
 
     /*
     This methods returns an array of xCoordinates or yCoordinates depending upon the index provided
