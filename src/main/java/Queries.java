@@ -18,16 +18,17 @@ public class Queries
     {
         Queries q = new Queries();
 //        q.getBuilding();
-        dbConnection.closeConnection();
+//        dbConnection.closeConnection();
+
         double[] all = new double[4];
         all[0] =   337.0;
         all[1] = 209.0;
         all[2] = 389.0;
         all[3] = 236.0;
-        List<Double> x = q.separateCoordinates(all, 1);
-        System.out.println(x);
+//        List<Double> x = q.separateCoordinates(all, 1);
+//        System.out.println(x);
+        q.convertToIntegerArray(all);
 
-                //[337.0, 209.0, 389.0, 236.0, 385.0, 242.0, 390.0, 244.0,
     }
 
     private void getBuilding()
@@ -42,7 +43,10 @@ public class Queries
             STRUCT st = (oracle.sql.STRUCT) rs.getObject(1);
             JGeometry j_geom = JGeometry.load(st);
             double[] coordinates =  j_geom.getOrdinatesArray();
-//            double[] xPoly =
+
+
+            List<Double> xPoly =  separateCoordinates(coordinates,0);
+            List<Double> yPoly =  separateCoordinates(coordinates,1);
             System.out.println(Arrays.toString(j_geom.getOrdinatesArray()));
             statement.close();
 
@@ -53,13 +57,32 @@ public class Queries
         }
     }
 
-    private List<Double> separateCoordinates(double[] coordinates, int index)
+
+    /*
+    This method seperates the xcoordinates and ycoordinates from the ordinate array
+     */
+     private List<Double> separateCoordinates(double[] coordinates, int index)
     {
         List<Double> points = new ArrayList<Double>();
         for(int i = index; i < coordinates.length; i = i+2)
         {
             points.add(coordinates[i]);
         }
+        return points;
+    }
+
+    /*
+    This method converts the double array of ordinates received from database into int array
+     */
+    private int[] convertToIntegerArray(double[] coordinates)
+    {
+        int[] points = new int[coordinates.length];
+        for (int i = 0; i < coordinates.length; i++)
+        {
+            Double value = coordinates[i];
+            points[i]  = value.intValue();
+        }
+        System.out.println(Arrays.toString(points));
         return points;
     }
 
