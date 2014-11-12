@@ -17,7 +17,6 @@ public class FrontEnd extends JLabel {
     private JCheckBox building;
     private JCheckBox photo;
     private JCheckBox photographer;
-    private JPanel panel1;
     private JRadioButton whole;
     private JRadioButton range;
     private JRadioButton point;
@@ -25,7 +24,6 @@ public class FrontEnd extends JLabel {
     private JRadioButton findPhotographer;
     private  JTextField viewQuery;
     private Polygon poly;
-    private JLabel l;
 
 
     public FrontEnd()
@@ -51,52 +49,6 @@ public class FrontEnd extends JLabel {
 
 
     }
-    /*
-    private void setMapImage()
-    {
-        // Temporary DBConnection
-
-        DatabaseConnection dbConnection = new DatabaseConnection();
-        Connection connection = dbConnection.getConnection();
-        Queries queries = new Queries(dbConnection, connection);
-        List<ArrayList<Integer>> allBuildingsGeo = queries.getAllBuildingGeo();
-        final List<Polygon> polyList = new ArrayList<Polygon>();
-
-
-        for(int i = 0; i < allBuildingsGeo.size(); i++) {
-            int[] xPoly = queries.separateCoordinates(allBuildingsGeo.get(i), 0);
-            int[] yPoly = queries.separateCoordinates(allBuildingsGeo.get(i), 1);
-//            background.add(new Drawing(xPoly,yPoly));
-//            Drawing drawing = new Drawing(xPoly,yPoly);
-            poly = new Polygon(xPoly, yPoly, xPoly.length);
-            polyList.add(poly);
-
-        }
-            background=new JLabel(new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"),SwingConstants.LEFT)
-            {
-                @Override
-                protected void paintComponent(Graphics g) {
-                    super.paintComponent(g);
-                    g.setColor(Color.YELLOW);
-                    for(Polygon eachPolygon: polyList){
-                    g.drawPolygon(eachPolygon); }
-
-
-                }
-                @Override
-                public Dimension getPreferredSize() {
-                    return new Dimension(820, 580);
-                }
-//
-            };
-//        }
-        background.setVerticalAlignment(SwingConstants.TOP);
-        frame.add(background);
-//        background.add(l);
-        background.setLayout(new FlowLayout());
-        frame.setVisible(true);
-    }
-     */
 
     private void setMapImage()
     {
@@ -106,15 +58,19 @@ public class FrontEnd extends JLabel {
         Connection connection = dbConnection.getConnection();
         Queries queries = new Queries(dbConnection, connection);
         List<ArrayList<Integer>> allBuildingsGeo = queries.getAllBuildingGeo();
-        final List<Polygon> polyList = new ArrayList<Polygon>();
+        final List<ArrayList<Integer>> allPhotoGeo = queries.getAllPhotoGeo();
+        final List<ArrayList<Integer>> allPhotographerGeo = queries.getAllPhotographerGeo();
+        dbConnection.closeConnection();
 
+        final List<Polygon> polyList = new ArrayList<Polygon>();
         for(int i = 0; i < allBuildingsGeo.size(); i++) {
-            int[] xPoly = queries.separateCoordinates(allBuildingsGeo.get(i), 0);
-            int[] yPoly = queries.separateCoordinates(allBuildingsGeo.get(i), 1);
-//            background.add(new Drawing(xPoly,yPoly));
-//            Drawing drawing = new Drawing(xPoly,yPoly);
+            int[] xPoly = queries.separatePolyCoordinates(allBuildingsGeo.get(i), 0);
+            int[] yPoly = queries.separatePolyCoordinates(allBuildingsGeo.get(i), 1);        // see if it can be abstracted
             poly = new Polygon(xPoly, yPoly, xPoly.length);
             polyList.add(poly);
+
+
+
 
         }
         background=new JLabel(new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"),SwingConstants.LEFT)
@@ -125,6 +81,18 @@ public class FrontEnd extends JLabel {
                 g.setColor(Color.YELLOW);
                 for(Polygon eachPolygon: polyList){
                     g.drawPolygon(eachPolygon); }
+
+                for(int i = 0; i < allPhotoGeo.size(); i++)
+                {
+                    g.drawOval(allPhotoGeo.get(i).get(0),allPhotoGeo.get(i).get(1),3,3);
+                    g.setColor(Color.BLUE);
+                }
+
+                for(int i = 0; i < allPhotographerGeo.size(); i++)
+                {
+                    g.drawRect(allPhotographerGeo.get(i).get(0),allPhotographerGeo.get(i).get(1),5,5);
+                    g.setColor(Color.GREEN);
+                }
             }
             @Override
             public Dimension getPreferredSize() {

@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Queries {
@@ -16,6 +17,16 @@ public class Queries {
         this.connection = connection;
     }
 
+//    public static void main(String[] args) {
+//        dbConnection = new DatabaseConnection();
+//        connection = dbConnection.getConnection();
+//        Queries queries = new Queries();
+//        List<ArrayList<Integer>> photo = queries.getAllBuildingGeo();
+//        dbConnection.closeConnection();
+//        System.out.println(photo);
+//
+//    }
+
     /*
     This method returns the List of ArrayList containing coordinates of each building
      */
@@ -25,14 +36,13 @@ public class Queries {
         try {
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(buildingGeo);
-            allBuildingsGeo = processResultSet(rs);
+            allBuildingsGeo = processResultSet(rs,"building");
             statement.close();
         } catch (SQLException e) {
             System.out.println("Error while retrieving data from Building table");
             e.printStackTrace();
         }
-        dbConnection.closeConnection();
-        System.out.println(allBuildingsGeo);
+//        System.out.println(allBuildingsGeo);
         return allBuildingsGeo;
     }
 
@@ -60,13 +70,12 @@ public class Queries {
         try {
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(photoGeo);
-            allPhotoGeo = processResultSet(rs);
+            allPhotoGeo = processResultSet(rs,"photo");
             statement.close();
         } catch (SQLException e) {
             System.out.println("Error while retrieving data from Photo table");
             e.printStackTrace();
         }
-        dbConnection.closeConnection();
         return allPhotoGeo;
     }
 
@@ -76,36 +85,43 @@ public class Queries {
     protected List<ArrayList<Integer>> getAllPhotographerGeo()
     {
         List<ArrayList<Integer>> allPhotographerGeo = new ArrayList<ArrayList<Integer>>();
-        String photographerGeo = "select PHOTOGRAPHERLOC from photo";
+        String photographerGeo = "select PHOTOGRAPHERLOC from photographer";
 
         try {
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(photographerGeo);
-            allPhotographerGeo = processResultSet(rs);
+            allPhotographerGeo = processResultSet(rs,"photographer");
             statement.close();
         } catch (SQLException e) {
             System.out.println("Error while retrieving data from Photographer table");
             e.printStackTrace();
         }
-        dbConnection.closeConnection();
         return allPhotographerGeo;
     }
 
     /*
     This method takes the ResultSet as input and returns the combined list of all coordinates for the tables.
      */
-    private List<ArrayList<Integer>> processResultSet(ResultSet rs)
+    private List<ArrayList<Integer>> processResultSet(ResultSet rs, String tableName)
     {
-        List<Integer> coordinateList;
+        List<Integer> coordinateList ;
         List<ArrayList<Integer>> allCoordinates = new ArrayList<ArrayList<Integer>>();
 
         try{
             while (rs.next()) {
                 STRUCT st = (oracle.sql.STRUCT) rs.getObject(1);
                 JGeometry j_geom = JGeometry.load(st);
-                double[] coordinates = j_geom.getOrdinatesArray();
-                coordinateList = convertToIntegerList(coordinates);
-                allCoordinates.add((ArrayList<Integer>) coordinateList);
+                if(tableName.equalsIgnoreCase("building"))
+                {
+                    double[] coordinates = j_geom.getOrdinatesArray();
+                    coordinateList = convertToIntegerList(coordinates);
+                    allCoordinates.add((ArrayList<Integer>) coordinateList);
+                }else if (tableName.equalsIgnoreCase("photo") || tableName.equalsIgnoreCase("photographer"))
+                {
+                    double[] coordinates = j_geom.getPoint();
+                    coordinateList = convertToIntegerList(coordinates);
+                    allCoordinates.add((ArrayList<Integer>) coordinateList);
+                }
             }
         } catch(SQLException e)
         {
@@ -119,7 +135,7 @@ public class Queries {
     /*
     This methods returns an array of xCoordinates or yCoordinates depending upon the index provided
      */
-    protected int[] separateCoordinates(List<Integer> coordinateList, int index) {
+    protected int[] separatePolyCoordinates(List<Integer> coordinateList, int index) {
         int[] points = new int[coordinateList.size() / 2];
         int indexOfCoordinates = index;
         for (int i = 0; i < points.length; i++) {
@@ -129,6 +145,8 @@ public class Queries {
         return points;
 
     }
+
+
 
 
 }
