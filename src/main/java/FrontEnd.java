@@ -1,10 +1,13 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.util.*;
+import java.util.List;
 import javax.swing.*;
 
 
-public class FrontEnd {
+public class FrontEnd extends JLabel {
 
     private JButton submitButton;
     private JLabel activeFeature;
@@ -21,6 +24,8 @@ public class FrontEnd {
     private JRadioButton findPhoto;
     private JRadioButton findPhotographer;
     private  JTextField viewQuery;
+    private Polygon poly;
+    private JLabel l;
 
 
     public FrontEnd()
@@ -49,16 +54,47 @@ public class FrontEnd {
 
     private void setMapImage()
     {
-        background=new JLabel(new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"),SwingConstants.LEFT);
+        // Temporary DBConnection
+
+        DatabaseConnection dbConnection = new DatabaseConnection();
+        Connection connection = dbConnection.getConnection();
+        Queries queries = new Queries(dbConnection, connection);
+        List<ArrayList<Integer>> allBuildingsGeo = queries.getBuilding();
+//        background=new JLabel(new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"),SwingConstants.LEFT);
+            final List<Polygon> polyList = new ArrayList<Polygon>();
+
+        for(int i = 0; i < allBuildingsGeo.size(); i++) {
+            int[] xPoly = queries.separateCoordinates(allBuildingsGeo.get(i), 0);
+            int[] yPoly = queries.separateCoordinates(allBuildingsGeo.get(i), 1);
+//            background.add(new Drawing(xPoly,yPoly));
+//            Drawing drawing = new Drawing(xPoly,yPoly);
+            poly = new Polygon(xPoly, yPoly, xPoly.length);
+            polyList.add(poly);
+        }
+            background=new JLabel(new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"),SwingConstants.LEFT)
+            {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                    g.setColor(Color.YELLOW);
+                    for(Polygon eachPolygon: polyList){
+                    g.drawPolygon(eachPolygon); }
+
+                }
+                @Override
+                public Dimension getPreferredSize() {
+                    return new Dimension(820, 580);
+                }
+//
+            };
+//        }
         background.setVerticalAlignment(SwingConstants.TOP);
-//        background.addMouseListener();
         frame.add(background);
+//        background.add(l);
         background.setLayout(new FlowLayout());
         frame.setVisible(true);
-
-
-
     }
+
 
     private void setActiveFeature()
     {

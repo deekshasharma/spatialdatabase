@@ -1,89 +1,84 @@
 import oracle.spatial.geometry.JGeometry;
 import oracle.sql.STRUCT;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Queries
 {
-    private static DatabaseConnection dbConnection = new DatabaseConnection();
-    private static Connection connection = dbConnection.getConnection();
+    private static DatabaseConnection dbConnection;
+    private static Connection connection;
 
-    public static void main(String[] args)
+    public Queries(DatabaseConnection dbConnection,Connection connection)
     {
-        Queries q = new Queries();
-//        q.getBuilding();
-//        dbConnection.closeConnection();
-
-        double[] all = new double[4];
-        all[0] =   337.0;
-        all[1] = 209.0;
-        all[2] = 389.0;
-        all[3] = 236.0;
-//        List<Double> x = q.separateCoordinates(all, 1);
-//        System.out.println(x);
-        q.convertToIntegerArray(all);
-
+        this.dbConnection = dbConnection;
+        this.connection = connection;
     }
 
-    private void getBuilding()
+    /*
+    This method returns the List of ArrayList containing coordinates of each building
+     */
+    protected List<ArrayList<Integer>> getBuilding()
     {
-        String buildingGeo = "select geo from building where buildingcode ='b2'";
-        try {
+        String buildingGeo = "select geo from building";
+        List<ArrayList<Integer>> allBuildingsGeo = new ArrayList<ArrayList<Integer>>();
+        List<Integer> coordinateList;
 
+        try {
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(buildingGeo);
-
-            rs.next();
-            STRUCT st = (oracle.sql.STRUCT) rs.getObject(1);
-            JGeometry j_geom = JGeometry.load(st);
-            double[] coordinates =  j_geom.getOrdinatesArray();
-
-
-            List<Double> xPoly =  separateCoordinates(coordinates,0);
-            List<Double> yPoly =  separateCoordinates(coordinates,1);
-            System.out.println(Arrays.toString(j_geom.getOrdinatesArray()));
+            while(rs.next())
+            {
+                STRUCT st = (oracle.sql.STRUCT) rs.getObject(1);
+                JGeometry j_geom = JGeometry.load(st);
+                double[] coordinates = j_geom.getOrdinatesArray();
+                coordinateList = convertToIntegerList(coordinates);
+                allBuildingsGeo.add((ArrayList<Integer>) coordinateList);
+            }
             statement.close();
-
         }catch (SQLException e)
         {
             System.out.println("Error while retrieving data from building table");
             e.printStackTrace();
         }
+        dbConnection.closeConnection();
+        return allBuildingsGeo;
     }
 
 
     /*
-    This method seperates the xcoordinates and ycoordinates from the ordinate array
+    This method converts the double array of ordinates received from database into int arraylist
      */
-     private List<Double> separateCoordinates(double[] coordinates, int index)
+    protected List<Integer> convertToIntegerList(double[] coordinates)
     {
-        List<Double> points = new ArrayList<Double>();
-        for(int i = index; i < coordinates.length; i = i+2)
-        {
-            points.add(coordinates[i]);
-        }
-        return points;
-    }
-
-    /*
-    This method converts the double array of ordinates received from database into int array
-     */
-    private int[] convertToIntegerArray(double[] coordinates)
-    {
-        int[] points = new int[coordinates.length];
+        List<Integer> points = new ArrayList<Integer>();
         for (int i = 0; i < coordinates.length; i++)
         {
             Double value = coordinates[i];
-            points[i]  = value.intValue();
+            points.add(value.intValue());
         }
-        System.out.println(Arrays.toString(points));
         return points;
     }
+
+
+    /*
+    This methods returns an array of xCoordinates or yCoordinates depending upon the index provided
+     */
+    protected int[] separateCoordinates(List<Integer> coordinateList, int index)
+    {
+        int[] points = new int[coordinateList.size()/2];
+        int indexOfCoordinates = index;
+        for(int i = 0; i < points.length; i++)
+        {
+            points[i] = coordinateList.get(indexOfCoordinates);
+            indexOfCoordinates += 2;
+        }
+        return points;
+
+    }
+
 
 }
