@@ -51,7 +51,7 @@ public class FrontEnd extends JLabel {
 
 
     }
-
+    /*
     private void setMapImage()
     {
         // Temporary DBConnection
@@ -59,9 +59,9 @@ public class FrontEnd extends JLabel {
         DatabaseConnection dbConnection = new DatabaseConnection();
         Connection connection = dbConnection.getConnection();
         Queries queries = new Queries(dbConnection, connection);
-        List<ArrayList<Integer>> allBuildingsGeo = queries.getBuilding();
-//        background=new JLabel(new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"),SwingConstants.LEFT);
-            final List<Polygon> polyList = new ArrayList<Polygon>();
+        List<ArrayList<Integer>> allBuildingsGeo = queries.getAllBuildingGeo();
+        final List<Polygon> polyList = new ArrayList<Polygon>();
+
 
         for(int i = 0; i < allBuildingsGeo.size(); i++) {
             int[] xPoly = queries.separateCoordinates(allBuildingsGeo.get(i), 0);
@@ -70,6 +70,7 @@ public class FrontEnd extends JLabel {
 //            Drawing drawing = new Drawing(xPoly,yPoly);
             poly = new Polygon(xPoly, yPoly, xPoly.length);
             polyList.add(poly);
+
         }
             background=new JLabel(new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"),SwingConstants.LEFT)
             {
@@ -79,6 +80,7 @@ public class FrontEnd extends JLabel {
                     g.setColor(Color.YELLOW);
                     for(Polygon eachPolygon: polyList){
                     g.drawPolygon(eachPolygon); }
+
 
                 }
                 @Override
@@ -91,6 +93,46 @@ public class FrontEnd extends JLabel {
         background.setVerticalAlignment(SwingConstants.TOP);
         frame.add(background);
 //        background.add(l);
+        background.setLayout(new FlowLayout());
+        frame.setVisible(true);
+    }
+     */
+
+    private void setMapImage()
+    {
+        // Temporary DBConnection
+
+        DatabaseConnection dbConnection = new DatabaseConnection();
+        Connection connection = dbConnection.getConnection();
+        Queries queries = new Queries(dbConnection, connection);
+        List<ArrayList<Integer>> allBuildingsGeo = queries.getAllBuildingGeo();
+        final List<Polygon> polyList = new ArrayList<Polygon>();
+
+        for(int i = 0; i < allBuildingsGeo.size(); i++) {
+            int[] xPoly = queries.separateCoordinates(allBuildingsGeo.get(i), 0);
+            int[] yPoly = queries.separateCoordinates(allBuildingsGeo.get(i), 1);
+//            background.add(new Drawing(xPoly,yPoly));
+//            Drawing drawing = new Drawing(xPoly,yPoly);
+            poly = new Polygon(xPoly, yPoly, xPoly.length);
+            polyList.add(poly);
+
+        }
+        background=new JLabel(new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"),SwingConstants.LEFT)
+        {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.setColor(Color.YELLOW);
+                for(Polygon eachPolygon: polyList){
+                    g.drawPolygon(eachPolygon); }
+            }
+            @Override
+            public Dimension getPreferredSize() {
+                return new Dimension(820, 580);
+            }
+        };
+        background.setVerticalAlignment(SwingConstants.TOP);
+        frame.add(background);
         background.setLayout(new FlowLayout());
         frame.setVisible(true);
     }
