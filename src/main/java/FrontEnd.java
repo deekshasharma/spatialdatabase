@@ -64,57 +64,7 @@ public class FrontEnd extends JLabel {
         frame.setVisible(true);
     }
 
-    /*
-    private void setMapImage()
-    {
-        // Temporary DBConnection
 
-        Queries queries = new Queries(dbConnection, connection);
-        List<ArrayList<Integer>> allBuildingsGeo = queries.getAllBuildingGeo();
-        final List<ArrayList<Integer>> allPhotoGeo = queries.getAllPhotoGeo();
-        final List<ArrayList<Integer>> allPhotographerGeo = queries.getAllPhotographerGeo();
-        dbConnection.closeConnection();
-
-        final List<Polygon> polyList = new ArrayList<Polygon>();
-        for(int i = 0; i < allBuildingsGeo.size(); i++) {
-            int[] xPoly = queries.separatePolyCoordinates(allBuildingsGeo.get(i), 0);
-            int[] yPoly = queries.separatePolyCoordinates(allBuildingsGeo.get(i), 1);        // see if it can be abstracted
-            poly = new Polygon(xPoly, yPoly, xPoly.length);
-            polyList.add(poly);
-        }
-        map =new JLabel(new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"),SwingConstants.LEFT)
-        {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                g.setColor(Color.YELLOW);
-                for(Polygon eachPolygon: polyList){
-                    g.drawPolygon(eachPolygon); }
-
-                for(int i = 0; i < allPhotoGeo.size(); i++)
-                {
-                    g.drawOval(allPhotoGeo.get(i).get(0),allPhotoGeo.get(i).get(1),3,3);
-                    g.setColor(Color.BLUE);
-                }
-
-                for(int i = 0; i < allPhotographerGeo.size(); i++)
-                {
-                    g.drawRect(allPhotographerGeo.get(i).get(0),allPhotographerGeo.get(i).get(1),5,5);
-                    g.setColor(Color.GREEN);
-                }
-            }
-            @Override
-            public Dimension getPreferredSize() {
-                return new Dimension(820, 580);
-            }
-        };
-        map.setVerticalAlignment(SwingConstants.TOP);
-        frame.add(map);
-        map.setLayout(new FlowLayout());
-        frame.setVisible(true);
-    }
-
-    */
     private void setMapImage(List<FeatureType> featureTypes)
     {
         Queries queries = new Queries(dbConnection, connection);
@@ -146,46 +96,6 @@ public class FrontEnd extends JLabel {
 //        dbConnection.closeConnection();
         frame.remove(map);
         map = new WholeRegion(polyList,allPhotoGeo,allPhotographerGeo,new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"));
-
-//        Queries queries = new Queries(dbConnection, connection);
-//        List<ArrayList<Integer>> allBuildingsGeo = queries.getAllBuildingGeo();
-//        final List<ArrayList<Integer>> allPhotoGeo = queries.getAllPhotoGeo();
-//        List<ArrayList<Integer>> allPhotographerGeo = queries.getAllPhotographerGeo();
-
-//        final List<Polygon> polyList = new ArrayList<Polygon>();
-//        for(int i = 0; i < allBuildingsGeo.size(); i++) {
-//            int[] xPoly = queries.separatePolyCoordinates(allBuildingsGeo.get(i), 0);
-//            int[] yPoly = queries.separatePolyCoordinates(allBuildingsGeo.get(i), 1);        // see if it can be abstracted
-//            poly = new Polygon(xPoly, yPoly, xPoly.length);
-//            polyList.add(poly);
-//        }
-        //frame.remove(map);
-//        map =new JLabel(new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"),SwingConstants.LEFT)
-//        {
-//            @Override
-//            protected void paintComponent(Graphics g) {
-//                super.paintComponent(g);
-//                g.setColor(Color.YELLOW);
-//                for(Polygon eachPolygon: polyList){
-//                    g.drawPolygon(eachPolygon); }
-//
-//                for(int i = 0; i < allPhotoGeo.size(); i++)
-//                {
-//                    g.drawOval(allPhotoGeo.get(i).get(0),allPhotoGeo.get(i).get(1),3,3);
-//                    g.setColor(Color.BLUE);
-//                }
-//
-//                for(int i = 0; i < allPhotographerGeo.size(); i++)
-//                {
-//                    g.drawRect(allPhotographerGeo.get(i).get(0),allPhotographerGeo.get(i).get(1),5,5);
-//                    g.setColor(Color.GREEN);
-//                }
-//            }
-//            @Override
-//            public Dimension getPreferredSize() {
-//                return new Dimension(820, 580);
-//            }
-//        };
         map.setVerticalAlignment(SwingConstants.TOP);
         frame.add(map);
         map.setLayout(new FlowLayout());
@@ -260,54 +170,31 @@ public class FrontEnd extends JLabel {
     {
               public void actionPerformed(ActionEvent e)
               {
-                  String submit = e.getActionCommand();
-
+                  e.getActionCommand();
                   if(whole.isSelected())
                   {
-                       int activeFeatureCode = getActiveFeatureType();
-                      if(activeFeatureCode == 1){
-                          List<FeatureType> featureTypes = new ArrayList<FeatureType>();
-                          featureTypes.add(FeatureType.BUILDING);
-                          featureTypes.add(FeatureType.PHOTO);
-                          featureTypes.add(FeatureType.PHOTOGRAPHER);
-                          setMapImage(featureTypes);
-                      } else if(activeFeatureCode == 2) {
-                          List<FeatureType> featureTypes = new ArrayList<FeatureType>();
-                          featureTypes.add(FeatureType.BUILDING);
-                          featureTypes.add(FeatureType.PHOTO);
-                          setMapImage(featureTypes);
-                      }
+                      List<FeatureType> featureTypes = getActiveFeatureType();
+                      setMapImage(featureTypes);
                   }
               }
     }
 
-    private int getActiveFeatureType()
+    /*
+    This method returns the List<FeatureType> that is active/checked. FeatureType is an ENUM
+     */
+    private List<FeatureType> getActiveFeatureType()
     {
-//        List<FeatureType> ft = new ArrayList<FeatureType>();
-        if(building.isSelected() & photo.isSelected() & photographer.isSelected())
-        {
-            return 1;     // all 3 selected
-        } else if (building.isSelected() & photo.isSelected())
-        {
-            return 2; //building and photo selected
-        }else if(building.isSelected() & photographer.isSelected())
-        {
-            return 3; // building and photographer selected
-        }else if (photographer.isSelected() & photo.isSelected())
-        {
-            return 4; // photographer and photo selected
-        }else if(building.isSelected() & (!photographer.isSelected()) & (!photo.isSelected()))
-        {
-            return 5; // only building is selected
-        }else if(photo.isSelected() & (!photographer.isSelected()) & (!building.isSelected()))
-        {
-            return 6; // only photo is selected
-        }else
-        {
-            return 7; // only photographer is selected
+        List<FeatureType> featureTypes = new ArrayList<FeatureType>();
+        if(building.isSelected()) {
+            featureTypes.add(FeatureType.BUILDING);
         }
-
-
+        if(photo.isSelected()) {
+            featureTypes.add(FeatureType.PHOTO);
+        }
+        if (photographer.isSelected()) {
+            featureTypes.add(FeatureType.PHOTOGRAPHER);
+        }
+        return featureTypes;
     }
 
 
