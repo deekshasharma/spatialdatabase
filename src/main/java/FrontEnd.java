@@ -79,7 +79,7 @@ public class FrontEnd extends JLabel {
                 List<ArrayList<Integer>> allBuildingsGeo = queries.getAllBuildingGeo();
                 for(int i = 0; i < allBuildingsGeo.size(); i++) {
                     int[] xPoly = queries.separatePolyCoordinates(allBuildingsGeo.get(i), 0);
-                    int[] yPoly = queries.separatePolyCoordinates(allBuildingsGeo.get(i), 1);        // see if it can be abstracted
+                    int[] yPoly = queries.separatePolyCoordinates(allBuildingsGeo.get(i), 1);
                     poly = new Polygon(xPoly, yPoly, xPoly.length);
                     polyList.add(poly);
                 }
@@ -93,7 +93,7 @@ public class FrontEnd extends JLabel {
                 allPhotographerGeo = queries.getAllPhotographerGeo();
             }
         }
-//        dbConnection.closeConnection();
+        dbConnection.closeConnection();       // create a singleton for the Database Connection class
         frame.remove(map);
         map = new WholeRegion(polyList,allPhotoGeo,allPhotographerGeo,new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"));
         map.setVerticalAlignment(SwingConstants.TOP);
