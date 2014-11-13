@@ -42,21 +42,7 @@ public class Queries {
             System.out.println("Error while retrieving data from Building table");
             e.printStackTrace();
         }
-//        System.out.println(allBuildingsGeo);
         return allBuildingsGeo;
-    }
-
-
-    /*
-    This method converts the double array of ordinates received from database into int arraylist
-     */
-    protected List<Integer> convertToIntegerList(double[] coordinates) {
-        List<Integer> points = new ArrayList<Integer>();
-        for (int i = 0; i < coordinates.length; i++) {
-            Double value = coordinates[i];
-            points.add(value.intValue());
-        }
-        return points;
     }
 
     /*
@@ -130,6 +116,19 @@ public class Queries {
         }
         return allCoordinates;
 
+    }
+
+
+    /*
+   This method converts the double array of ordinates received from database into int arraylist
+    */
+    protected List<Integer> convertToIntegerList(double[] coordinates) {
+        List<Integer> points = new ArrayList<Integer>();
+        for (int i = 0; i < coordinates.length; i++) {
+            Double value = coordinates[i];
+            points.add(value.intValue());
+        }
+        return points;
     }
 
     /*

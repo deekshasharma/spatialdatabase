@@ -12,7 +12,7 @@ public class FrontEnd extends JLabel {
     private JButton submitButton;
     private JLabel activeFeature;
     private JLabel query;
-    private JLabel background;
+    private JLabel map;
     private JFrame frame;
     private JCheckBox building;
     private JCheckBox photo;
@@ -24,6 +24,12 @@ public class FrontEnd extends JLabel {
     private JRadioButton findPhotographer;
     private  JTextField viewQuery;
     private Polygon poly;
+    private JPanel panel;
+    private JPanel panel1;
+
+
+    DatabaseConnection dbConnection = new DatabaseConnection();
+    Connection connection = dbConnection.getConnection();
 
 
     public FrontEnd()
@@ -41,21 +47,28 @@ public class FrontEnd extends JLabel {
     public static void main(String[] args)
     {
         FrontEnd image = new FrontEnd();
-        image.setMapImage();
+//        image.setMapImage();
+        image.setMap();
         image.setActiveFeature();
         image.setQuery();
         image.addSubmit();
         image.setQueryTextField();
-
-
     }
 
+    private void setMap()
+    {
+        map = new JLabel(new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"),SwingConstants.LEFT);
+        map.setVerticalAlignment(SwingConstants.TOP);
+        frame.add(map);
+        map.setLayout(new FlowLayout());
+        frame.setVisible(true);
+    }
+
+    /*
     private void setMapImage()
     {
         // Temporary DBConnection
 
-        DatabaseConnection dbConnection = new DatabaseConnection();
-        Connection connection = dbConnection.getConnection();
         Queries queries = new Queries(dbConnection, connection);
         List<ArrayList<Integer>> allBuildingsGeo = queries.getAllBuildingGeo();
         final List<ArrayList<Integer>> allPhotoGeo = queries.getAllPhotoGeo();
@@ -68,12 +81,8 @@ public class FrontEnd extends JLabel {
             int[] yPoly = queries.separatePolyCoordinates(allBuildingsGeo.get(i), 1);        // see if it can be abstracted
             poly = new Polygon(xPoly, yPoly, xPoly.length);
             polyList.add(poly);
-
-
-
-
         }
-        background=new JLabel(new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"),SwingConstants.LEFT)
+        map =new JLabel(new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"),SwingConstants.LEFT)
         {
             @Override
             protected void paintComponent(Graphics g) {
@@ -99,64 +108,126 @@ public class FrontEnd extends JLabel {
                 return new Dimension(820, 580);
             }
         };
-        background.setVerticalAlignment(SwingConstants.TOP);
-        frame.add(background);
-        background.setLayout(new FlowLayout());
+        map.setVerticalAlignment(SwingConstants.TOP);
+        frame.add(map);
+        map.setLayout(new FlowLayout());
         frame.setVisible(true);
     }
 
+    */
+    private void setMapImage(List<FeatureType> featureTypes)
+    {
+        Queries queries = new Queries(dbConnection, connection);
+        final List<Polygon> polyList = new ArrayList<Polygon>();
+        List<ArrayList<Integer>> allPhotoGeo = new ArrayList<ArrayList<Integer>>();
+        List<ArrayList<Integer>> allPhotographerGeo = new ArrayList<ArrayList<Integer>>();
+
+        for(FeatureType feature : featureTypes)
+        {
+            if(feature == FeatureType.BUILDING)
+            {
+                List<ArrayList<Integer>> allBuildingsGeo = queries.getAllBuildingGeo();
+                for(int i = 0; i < allBuildingsGeo.size(); i++) {
+                    int[] xPoly = queries.separatePolyCoordinates(allBuildingsGeo.get(i), 0);
+                    int[] yPoly = queries.separatePolyCoordinates(allBuildingsGeo.get(i), 1);        // see if it can be abstracted
+                    poly = new Polygon(xPoly, yPoly, xPoly.length);
+                    polyList.add(poly);
+                }
+            }
+            if(feature == FeatureType.PHOTO)
+            {
+                allPhotoGeo = queries.getAllPhotoGeo();
+            }
+            if(feature == FeatureType.PHOTOGRAPHER)
+            {
+                allPhotographerGeo = queries.getAllPhotographerGeo();
+            }
+        }
+//        dbConnection.closeConnection();
+        frame.remove(map);
+        map = new WholeRegion(polyList,allPhotoGeo,allPhotographerGeo,new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"));
+
+//        Queries queries = new Queries(dbConnection, connection);
+//        List<ArrayList<Integer>> allBuildingsGeo = queries.getAllBuildingGeo();
+//        final List<ArrayList<Integer>> allPhotoGeo = queries.getAllPhotoGeo();
+//        List<ArrayList<Integer>> allPhotographerGeo = queries.getAllPhotographerGeo();
+
+//        final List<Polygon> polyList = new ArrayList<Polygon>();
+//        for(int i = 0; i < allBuildingsGeo.size(); i++) {
+//            int[] xPoly = queries.separatePolyCoordinates(allBuildingsGeo.get(i), 0);
+//            int[] yPoly = queries.separatePolyCoordinates(allBuildingsGeo.get(i), 1);        // see if it can be abstracted
+//            poly = new Polygon(xPoly, yPoly, xPoly.length);
+//            polyList.add(poly);
+//        }
+        //frame.remove(map);
+//        map =new JLabel(new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"),SwingConstants.LEFT)
+//        {
+//            @Override
+//            protected void paintComponent(Graphics g) {
+//                super.paintComponent(g);
+//                g.setColor(Color.YELLOW);
+//                for(Polygon eachPolygon: polyList){
+//                    g.drawPolygon(eachPolygon); }
+//
+//                for(int i = 0; i < allPhotoGeo.size(); i++)
+//                {
+//                    g.drawOval(allPhotoGeo.get(i).get(0),allPhotoGeo.get(i).get(1),3,3);
+//                    g.setColor(Color.BLUE);
+//                }
+//
+//                for(int i = 0; i < allPhotographerGeo.size(); i++)
+//                {
+//                    g.drawRect(allPhotographerGeo.get(i).get(0),allPhotographerGeo.get(i).get(1),5,5);
+//                    g.setColor(Color.GREEN);
+//                }
+//            }
+//            @Override
+//            public Dimension getPreferredSize() {
+//                return new Dimension(820, 580);
+//            }
+//        };
+        map.setVerticalAlignment(SwingConstants.TOP);
+        frame.add(map);
+        map.setLayout(new FlowLayout());
+        frame.setVisible(true);
+    }
 
     private void setActiveFeature()
     {
+        panel = new JPanel();
         activeFeature =new JLabel("Active Feature Type",SwingConstants.RIGHT);
-        activeFeature =new JLabel("Active Feature Type",JLabel.NORTH_EAST);
-        activeFeature.setVerticalAlignment(SwingConstants.TOP);
-        frame.add(activeFeature);
-        frame.setVisible(true);
-
         building = new JCheckBox("Building");
-        frame.add(building);
-        frame.setVisible(true);
-
         photo = new JCheckBox("Photo");
-        frame.add(photo);
-        frame.setVisible(true);
-
         photographer = new JCheckBox("Photographer");
-        frame.add(photographer);
+
+        panel.add(activeFeature);
+        panel.add(building);
+        panel.add(photo);
+        panel.add(photographer);
+        frame.add(panel);
         frame.setVisible(true);
     }
 
     private void setQuery()
     {
+        panel1 = new JPanel();
         query = new JLabel("Query", SwingConstants.RIGHT);
-        query.setVerticalAlignment(SwingConstants.CENTER);
-        frame.add(query);
-
         whole = new JRadioButton("Whole Region");
-        frame.add(whole);
-
         range = new JRadioButton("Range Query");
-        frame.add(range);
-
         point = new JRadioButton("Point Query");
-        frame.add(point);
-
         findPhoto = new JRadioButton("Find photos");
-        frame.add(findPhoto);
-
         findPhotographer = new JRadioButton("Find photographer");
-        frame.add(findPhotographer);
+        panel1.add(query);
+        panel1.add(whole);
+        panel1.add(range);
+        panel1.add(point);
+        panel1.add(findPhoto);
+        panel1.add(findPhotographer);
+        frame.add(panel1);
         frame.setVisible(true);
 
     }
 
-    private void addSubmit()
-    {
-        submitButton = new JButton("Submit Query");
-        frame.add(submitButton);
-        frame.setVisible(true);
-    }
 
     private void setQueryTextField()
     {
@@ -177,7 +248,67 @@ public class FrontEnd extends JLabel {
     }
 
 
+    private void addSubmit()
+    {
+        submitButton = new JButton("Submit Query");
+        frame.add(submitButton);
+        submitButton.addActionListener(new ButtonClickListener());
+        frame.setVisible(true);
+    }
 
+    private class ButtonClickListener implements ActionListener
+    {
+              public void actionPerformed(ActionEvent e)
+              {
+                  String submit = e.getActionCommand();
+
+                  if(whole.isSelected())
+                  {
+                       int activeFeatureCode = getActiveFeatureType();
+                      if(activeFeatureCode == 1){
+                          List<FeatureType> featureTypes = new ArrayList<FeatureType>();
+                          featureTypes.add(FeatureType.BUILDING);
+                          featureTypes.add(FeatureType.PHOTO);
+                          featureTypes.add(FeatureType.PHOTOGRAPHER);
+                          setMapImage(featureTypes);
+                      } else if(activeFeatureCode == 2) {
+                          List<FeatureType> featureTypes = new ArrayList<FeatureType>();
+                          featureTypes.add(FeatureType.BUILDING);
+                          featureTypes.add(FeatureType.PHOTO);
+                          setMapImage(featureTypes);
+                      }
+                  }
+              }
+    }
+
+    private int getActiveFeatureType()
+    {
+//        List<FeatureType> ft = new ArrayList<FeatureType>();
+        if(building.isSelected() & photo.isSelected() & photographer.isSelected())
+        {
+            return 1;     // all 3 selected
+        } else if (building.isSelected() & photo.isSelected())
+        {
+            return 2; //building and photo selected
+        }else if(building.isSelected() & photographer.isSelected())
+        {
+            return 3; // building and photographer selected
+        }else if (photographer.isSelected() & photo.isSelected())
+        {
+            return 4; // photographer and photo selected
+        }else if(building.isSelected() & (!photographer.isSelected()) & (!photo.isSelected()))
+        {
+            return 5; // only building is selected
+        }else if(photo.isSelected() & (!photographer.isSelected()) & (!building.isSelected()))
+        {
+            return 6; // only photo is selected
+        }else
+        {
+            return 7; // only photographer is selected
+        }
+
+
+    }
 
 
 }
