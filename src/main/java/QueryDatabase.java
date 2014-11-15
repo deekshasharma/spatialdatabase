@@ -1,6 +1,5 @@
 import oracle.spatial.geometry.JGeometry;
 import oracle.sql.STRUCT;
-
 import java.awt.*;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -18,6 +17,17 @@ public class QueryDatabase {
 //        this.connection = connection;
 //    }
 
+    public static void main(String[] args) {
+        QueryDatabase database = new QueryDatabase();
+        List<FeatureType> featureTypes = new ArrayList<FeatureType>();
+//        featureTypes.add(FeatureType.BUILDING);
+//        featureTypes.add(FeatureType.PHOTO);
+        featureTypes.add(FeatureType.PHOTOGRAPHER);
+//        database.getRangePolygons(featureTypes);
+//        database.getRangePhotoPoints(featureTypes);
+        database.getRangePhotographerPoints(featureTypes);
+        dbConnection.closeConnection();
+    }
     /*
     This method returns the List of ArrayList containing coordinates of each building
      */
@@ -134,17 +144,16 @@ public class QueryDatabase {
     }
 
  /*
-    Returns a list of all building / polygons retrieved from database
+    Returns a list of all building / polygons retrieved from database.
   */
-    protected List<Polygon> getAllPolygons(List<FeatureType> featureTypes)
+    protected List<Polygon> getWholePolygons(List<FeatureType> featureTypes)
     {
         Polygon polygon;
         List<Polygon> polyList = new ArrayList<Polygon>();
         String buildingGeo = "select GEO from building";
 
-
-        for(FeatureType feature : featureTypes) {
-            if (feature == FeatureType.BUILDING) {
+        if(featureTypes.contains(FeatureType.BUILDING))
+        {
                 List<ArrayList<Integer>> allBuildingsGeo = queryBuildingTable(buildingGeo);
                 for (int i = 0; i < allBuildingsGeo.size(); i++) {
                     int[] xPoly = separatePolyCoordinates(allBuildingsGeo.get(i), 0);
@@ -152,7 +161,6 @@ public class QueryDatabase {
                     polygon = new Polygon(xPoly, yPoly, xPoly.length);
                     polyList.add(polygon);
                 }
-            }
         }
         return polyList;
     }
@@ -160,37 +168,101 @@ public class QueryDatabase {
     /*
     Returns a list of all photo coordinates from the data base
      */
-    protected List<ArrayList<Integer>>  getAllPhotoPoints(List<FeatureType> featureTypes)
+    protected List<ArrayList<Integer>> getWholePhotoPoints(List<FeatureType> featureTypes)
     {
         List<ArrayList<Integer>> allPhotoGeo = new ArrayList<ArrayList<Integer>>();
-        String photoGeo = "select PHOTOCOORDINATES from photo";
 
-
-        for(FeatureType feature : featureTypes) {
-            if (feature == FeatureType.PHOTO) {
-                allPhotoGeo = queryPhotoTable(photoGeo);
-            }
-        }
-        return allPhotoGeo;
+       if(featureTypes.contains(FeatureType.PHOTO))
+       {
+            String photoGeo = "select PHOTOCOORDINATES from photo";
+           allPhotoGeo = queryPhotoTable(photoGeo);
+       }
+         return allPhotoGeo;
     }
 
     /*
     Returns the list of all photographer coordinates from the database.
      */
-    protected List<ArrayList<Integer>>  getAllPhotographerPoints(List<FeatureType> featureTypes)
+    protected List<ArrayList<Integer>> getWholePhotographerPoints(List<FeatureType> featureTypes)
     {
         List<ArrayList<Integer>> allPhotographerGeo = new ArrayList<ArrayList<Integer>>();
-        String photographerGeo = "select PHOTOGRAPHERLOC from photographer";
 
-        for(FeatureType feature : featureTypes) {
-            if(feature == FeatureType.PHOTOGRAPHER)
-            {
-                allPhotographerGeo = queryPhotographerTable(photographerGeo);
-            }
+        if(featureTypes.contains(FeatureType.PHOTOGRAPHER))
+        {
+            String photographerGeo = "select PHOTOGRAPHERLOC from photographer";
+            allPhotographerGeo = queryPhotographerTable(photographerGeo);
         }
-        return allPhotographerGeo;
+            return allPhotographerGeo;
     }
 
+
+    /*
+    Returns List of all polygons for Range Query
+     */
+    protected List<Polygon> getRangePolygons(List<FeatureType> featureTypes)
+    {
+        Polygon polygon;
+        List<Polygon> polyList = new ArrayList<Polygon>();
+
+
+            if (featureTypes.contains(FeatureType.BUILDING))
+            {
+                String buildingGeo = "(select B.GEO from building B\n" +
+                        "where SDO_FILTER(B.GEO, \n" +
+                        "MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,1)," +
+                        "MDSYS.SDO_ORDINATE_ARRAY(240,100,280,100,259,580,300,580,240,100)),\n" +
+                        "'querytype=WINDOW') = 'TRUE')\n";
+                List<ArrayList<Integer>> allBuildingsGeo = queryBuildingTable(buildingGeo);
+                System.out.println(allBuildingsGeo);
+                for (int i = 0; i < allBuildingsGeo.size(); i++) {
+                    int[] xPoly = separatePolyCoordinates(allBuildingsGeo.get(i), 0);
+                    int[] yPoly = separatePolyCoordinates(allBuildingsGeo.get(i), 1);
+                    polygon = new Polygon(xPoly, yPoly, xPoly.length);
+                    polyList.add(polygon);
+                }
+            }
+        return polyList;
+    }
+
+    /*
+    Returns List of all PhotoCoordinates for Range Query
+     */
+    protected List<ArrayList<Integer>> getRangePhotoPoints(List<FeatureType> featureTypes)
+    {
+        List<ArrayList<Integer>> allPhotoGeo = new ArrayList<ArrayList<Integer>>();
+
+        if(featureTypes.contains(FeatureType.PHOTO))
+        {
+            String photoGeo = "select P.PHOTOCOORDINATES from photo P\n" +
+                    "where SDO_FILTER( P.PHOTOCOORDINATES,\n" +
+                    "MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,1)," +
+                    "MDSYS.SDO_ORDINATE_ARRAY(240,100,280,100,259,580,300,580,240,100)),\n" +
+                    "'querytype=WINDOW') = 'TRUE'\n";
+            allPhotoGeo = queryPhotoTable(photoGeo);
+        }
+        System.out.println(allPhotoGeo);
+        return allPhotoGeo;
+    }
+
+    /*
+    Returns the list of all Photographer Coordinates for Range query
+     */
+    protected List<ArrayList<Integer>> getRangePhotographerPoints(List<FeatureType> featureTypes)
+    {
+        List<ArrayList<Integer>> allPhotographerGeo = new ArrayList<ArrayList<Integer>>();
+
+        if(featureTypes.contains(FeatureType.PHOTOGRAPHER))
+        {
+            String photographerGeo = "select Ph.PHOTOGRAPHERLOC from photographer Ph\n" +
+                    "where SDO_FILTER(Ph.PHOTOGRAPHERLOC,\n" +
+                    "MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,1)," +
+                    "MDSYS.SDO_ORDINATE_ARRAY(240,100,280,100,259,580,300,580,240,100)),\n" +
+                    "'querytype=WINDOW') = 'TRUE'";
+            allPhotographerGeo = queryPhotographerTable(photographerGeo);
+        }
+        System.out.println(allPhotographerGeo);
+        return allPhotographerGeo;
+    }
 
 
 }

@@ -64,9 +64,9 @@ public class FrontEnd extends JLabel {
     private void wholeSelected(List<FeatureType> featureTypes)
     {
         QueryDatabase queryDatabase = new QueryDatabase();
-        List<Polygon> polyList = queryDatabase.getAllPolygons(featureTypes);
-        List<ArrayList<Integer>> allPhotoGeo = queryDatabase.getAllPhotoPoints(featureTypes);
-        List<ArrayList<Integer>> allPhotographerGeo = queryDatabase.getAllPhotographerPoints(featureTypes);
+        List<Polygon> polyList = queryDatabase.getWholePolygons(featureTypes);
+        List<ArrayList<Integer>> allPhotoGeo = queryDatabase.getWholePhotoPoints(featureTypes);
+        List<ArrayList<Integer>> allPhotographerGeo = queryDatabase.getWholePhotographerPoints(featureTypes);
 
         frame.remove(map);
         map = new WholeRegionUI(polyList,allPhotoGeo,allPhotographerGeo,
