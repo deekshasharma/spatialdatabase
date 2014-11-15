@@ -1,7 +1,6 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
@@ -28,10 +27,6 @@ public class FrontEnd extends JLabel {
     private JPanel panel1;
 
 
-    DatabaseConnection dbConnection = new DatabaseConnection();
-    Connection connection = dbConnection.getConnection();
-
-
     public FrontEnd()
     {
 
@@ -47,7 +42,6 @@ public class FrontEnd extends JLabel {
     public static void main(String[] args)
     {
         FrontEnd image = new FrontEnd();
-//        image.setMapImage();
         image.setMap();
         image.setActiveFeature();
         image.setQuery();
@@ -64,38 +58,19 @@ public class FrontEnd extends JLabel {
         frame.setVisible(true);
     }
 
-
-    private void setMapImage(List<FeatureType> featureTypes)
+    /*
+    This method is called when whole region query is selected and submitted.
+     */
+    private void wholeSelected(List<FeatureType> featureTypes)
     {
-        Queries queries = new Queries(dbConnection, connection);
-        final List<Polygon> polyList = new ArrayList<Polygon>();
-        List<ArrayList<Integer>> allPhotoGeo = new ArrayList<ArrayList<Integer>>();
-        List<ArrayList<Integer>> allPhotographerGeo = new ArrayList<ArrayList<Integer>>();
+        QueryDatabase queryDatabase = new QueryDatabase();
+        List<Polygon> polyList = queryDatabase.getAllPolygons(featureTypes);
+        List<ArrayList<Integer>> allPhotoGeo = queryDatabase.getAllPhotoPoints(featureTypes);
+        List<ArrayList<Integer>> allPhotographerGeo = queryDatabase.getAllPhotographerPoints(featureTypes);
 
-        for(FeatureType feature : featureTypes)
-        {
-            if(feature == FeatureType.BUILDING)
-            {
-                List<ArrayList<Integer>> allBuildingsGeo = queries.getAllBuildingGeo();
-                for(int i = 0; i < allBuildingsGeo.size(); i++) {
-                    int[] xPoly = queries.separatePolyCoordinates(allBuildingsGeo.get(i), 0);
-                    int[] yPoly = queries.separatePolyCoordinates(allBuildingsGeo.get(i), 1);
-                    poly = new Polygon(xPoly, yPoly, xPoly.length);
-                    polyList.add(poly);
-                }
-            }
-            if(feature == FeatureType.PHOTO)
-            {
-                allPhotoGeo = queries.getAllPhotoGeo();
-            }
-            if(feature == FeatureType.PHOTOGRAPHER)
-            {
-                allPhotographerGeo = queries.getAllPhotographerGeo();
-            }
-        }
-        dbConnection.closeConnection();       // create a singleton for the Database Connection class
         frame.remove(map);
-        map = new WholeRegion(polyList,allPhotoGeo,allPhotographerGeo,new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"));
+        map = new WholeRegionUI(polyList,allPhotoGeo,allPhotographerGeo,
+                new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"));
         map.setVerticalAlignment(SwingConstants.TOP);
         frame.add(map);
         map.setLayout(new FlowLayout());
@@ -121,12 +96,22 @@ public class FrontEnd extends JLabel {
     private void setQuery()
     {
         panel1 = new JPanel();
+        ButtonGroup group = new ButtonGroup();
         query = new JLabel("Query", SwingConstants.RIGHT);
         whole = new JRadioButton("Whole Region");
         range = new JRadioButton("Range Query");
         point = new JRadioButton("Point Query");
         findPhoto = new JRadioButton("Find photos");
         findPhotographer = new JRadioButton("Find photographer");
+        group.add(whole);
+
+        group.add(range);
+        range.addActionListener(new rangeRadioAction());
+
+        group.add(point);
+        group.add(findPhoto);
+        group.add(findPhotographer);
+
         panel1.add(query);
         panel1.add(whole);
         panel1.add(range);
@@ -137,6 +122,22 @@ public class FrontEnd extends JLabel {
         frame.setVisible(true);
 
     }
+      /*
+      Allows the user to draw the polygon once range radio button is checked.
+       */
+     class rangeRadioAction implements ActionListener{
+
+        public void actionPerformed (ActionEvent e)
+        {
+            frame.remove(map);
+            map = new RangeUI(new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"));
+            frame.add(map);
+            frame.setVisible(true);
+            map.setVisible(true);
+        }
+
+    }
+
 
 
     private void setQueryTextField()
@@ -162,11 +163,15 @@ public class FrontEnd extends JLabel {
     {
         submitButton = new JButton("Submit Query");
         frame.add(submitButton);
-        submitButton.addActionListener(new ButtonClickListener());
+        submitButton.addActionListener(new submitButtonListener());
         frame.setVisible(true);
     }
 
-    private class ButtonClickListener implements ActionListener
+
+    /*
+    This methods directs the actions of submit button
+     */
+    private class submitButtonListener implements ActionListener
     {
               public void actionPerformed(ActionEvent e)
               {
@@ -174,7 +179,11 @@ public class FrontEnd extends JLabel {
                   if(whole.isSelected())
                   {
                       List<FeatureType> featureTypes = getActiveFeatureType();
-                      setMapImage(featureTypes);
+                      wholeSelected(featureTypes);
+                  }
+                  if(range.isSelected())
+                  {
+                      System.out.println("Range is selected");
                   }
               }
     }

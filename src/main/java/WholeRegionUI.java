@@ -3,7 +3,7 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-public class WholeRegion extends JLabel{
+public class WholeRegionUI extends JLabel{
 
     List<Polygon> polyList;
     ImageIcon imageIcon;
@@ -12,8 +12,8 @@ public class WholeRegion extends JLabel{
 
 
 
-    public WholeRegion(java.util.List<Polygon> polyList, java.util.List<ArrayList<Integer>> allPhotoGeo,
-                       List<ArrayList<Integer>> allPhotographerGeo,ImageIcon imageIcon)
+    public WholeRegionUI(java.util.List<Polygon> polyList, java.util.List<ArrayList<Integer>> allPhotoGeo,
+                         List<ArrayList<Integer>> allPhotographerGeo, ImageIcon imageIcon)
     {
         super(imageIcon,SwingConstants.LEFT);
         this.polyList = polyList;
@@ -21,8 +21,6 @@ public class WholeRegion extends JLabel{
         this.allPhotographerGeo = allPhotographerGeo;
         this.imageIcon = imageIcon;
     }
-
-
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -49,8 +47,7 @@ public class WholeRegion extends JLabel{
                     g.setColor(Color.GREEN);
                 }
         }
-    }
-
+}
 
     @Override
     public Dimension getPreferredSize() {
