@@ -4,6 +4,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.*;
+import java.util.List;
 
 /**
  This class draws the polygon on the map
@@ -20,7 +21,7 @@ class RangeUI extends JLabel
     /**
      * The list of points making up a polygon.
      */
-    private ArrayList points = new ArrayList();
+    private static ArrayList points = new ArrayList();
 
 
     RangeUI(ImageIcon image)
@@ -117,6 +118,11 @@ class RangeUI extends JLabel
 
         g.setColor(Color.RED);
         g.fillOval(x2, y2, 8, 8);
+    }
+
+    public static List<Point> getPolygonPoints()
+    {
+        return points;
     }
 
 

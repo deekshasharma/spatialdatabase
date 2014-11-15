@@ -1,6 +1,9 @@
+import com.sun.xml.internal.messaging.saaj.packaging.mime.util.QEncoderStream;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
@@ -183,7 +186,44 @@ public class FrontEnd extends JLabel {
                   }
                   if(range.isSelected())
                   {
-                      System.out.println("Range is selected");
+                      List<FeatureType> featureTypes = getActiveFeatureType();
+                      Helper helper = new Helper();
+                      String polygonPoints = helper.pointToString(RangeUI.getPolygonPoints());
+                      QueryDatabase queryDatabase = new QueryDatabase();
+                      final List<Polygon> polyList = queryDatabase.getRangePolygons(featureTypes,polygonPoints);
+                      List<ArrayList<Integer>> photo = new ArrayList<ArrayList<Integer>>();
+                      List<ArrayList<Integer>> photographer = new ArrayList<ArrayList<Integer>>();
+                      System.out.println("Polygon drawn :" + polygonPoints);
+                      //map.re;
+//                      frame.remove(map);
+//                      map = new WholeRegionUI(polyList,photo,photographer,
+//                              new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"));
+
+//                      frame.add(map);
+//                      map.setVisible(true);
+//                      frame.setVisible(true);
+
+
+
+//                          JLabel label =new JLabel()
+//                                              {
+//                                     @Override
+//                                     protected void paintComponent(Graphics g) {
+//                                          super.paintComponent(g);
+//                                          g.setColor(Color.YELLOW);
+//                                          for(Polygon eachPolygon: polyList){
+//                                              g.drawPolygon(eachPolygon); }
+//                                      }
+//                                      @Override
+//                                      public Dimension getPreferredSize() {
+//                                          return new Dimension(820, 580);
+//                                      }
+//
+//                                          };
+//                      map.add(label);
+//                      label.setVisible(true);
+//                      map.setVisible(true);
+//                      frame.setVisible(true);
                   }
               }
     }

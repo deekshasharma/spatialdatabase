@@ -6,7 +6,7 @@ import java.util.List;
 public class WholeRegionUI extends JLabel{
 
     List<Polygon> polyList;
-    ImageIcon imageIcon;
+    ImageIcon imageIcon;// = new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG");
     List<ArrayList<Integer>> allPhotoGeo;
     List<ArrayList<Integer>> allPhotographerGeo;
 
