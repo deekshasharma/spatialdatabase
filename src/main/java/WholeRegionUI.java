@@ -6,9 +6,10 @@ import java.util.List;
 public class WholeRegionUI extends JLabel{
 
     List<Polygon> polyList;
-    ImageIcon imageIcon;// = new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG");
+    ImageIcon imageIcon;
     List<ArrayList<Integer>> allPhotoGeo;
     List<ArrayList<Integer>> allPhotographerGeo;
+    List<Polygon> rangepolygon;
 
 
 
@@ -21,6 +22,7 @@ public class WholeRegionUI extends JLabel{
         this.allPhotographerGeo = allPhotographerGeo;
         this.imageIcon = imageIcon;
     }
+
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -52,6 +54,12 @@ public class WholeRegionUI extends JLabel{
     @Override
     public Dimension getPreferredSize() {
         return new Dimension(820, 580);
+    }
+
+
+    protected void setRangepolygon(List<Polygon> rangepolygon)
+    {
+        this.rangepolygon = rangepolygon;
     }
 
 }

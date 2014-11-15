@@ -32,4 +32,17 @@ public class Helper {
         System.out.println(points);
         return points.toString();
     }
+
+
+
+    protected void pointToIntegerList(List<Point> polygonPoints)
+    {
+        int[] xPoints = new int[polygonPoints.size()];
+        for(int i = 0; i < xPoints.length; i++)
+        {
+//            xPoints[i] = ()polygonPoints.get(i).getX();
+        }
+
+
+        }
 }

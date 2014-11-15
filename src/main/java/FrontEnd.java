@@ -29,7 +29,6 @@ public class FrontEnd extends JLabel {
     private JPanel panel;
     private JPanel panel1;
 
-
     public FrontEnd()
     {
 
@@ -45,6 +44,7 @@ public class FrontEnd extends JLabel {
     public static void main(String[] args)
     {
         FrontEnd image = new FrontEnd();
+
         image.setMap();
         image.setActiveFeature();
         image.setQuery();
@@ -61,24 +61,6 @@ public class FrontEnd extends JLabel {
         frame.setVisible(true);
     }
 
-    /*
-    This method is called when whole region query is selected and submitted.
-     */
-    private void wholeSelected(List<FeatureType> featureTypes)
-    {
-        QueryDatabase queryDatabase = new QueryDatabase();
-        List<Polygon> polyList = queryDatabase.getWholePolygons(featureTypes);
-        List<ArrayList<Integer>> allPhotoGeo = queryDatabase.getWholePhotoPoints(featureTypes);
-        List<ArrayList<Integer>> allPhotographerGeo = queryDatabase.getWholePhotographerPoints(featureTypes);
-
-        frame.remove(map);
-        map = new WholeRegionUI(polyList,allPhotoGeo,allPhotographerGeo,
-                new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"));
-        map.setVerticalAlignment(SwingConstants.TOP);
-        frame.add(map);
-        map.setLayout(new FlowLayout());
-        frame.setVisible(true);
-    }
 
     private void setActiveFeature()
     {
@@ -187,43 +169,8 @@ public class FrontEnd extends JLabel {
                   if(range.isSelected())
                   {
                       List<FeatureType> featureTypes = getActiveFeatureType();
-                      Helper helper = new Helper();
-                      String polygonPoints = helper.pointToString(RangeUI.getPolygonPoints());
-                      QueryDatabase queryDatabase = new QueryDatabase();
-                      final List<Polygon> polyList = queryDatabase.getRangePolygons(featureTypes,polygonPoints);
-                      List<ArrayList<Integer>> photo = new ArrayList<ArrayList<Integer>>();
-                      List<ArrayList<Integer>> photographer = new ArrayList<ArrayList<Integer>>();
-                      System.out.println("Polygon drawn :" + polygonPoints);
-                      //map.re;
-//                      frame.remove(map);
-//                      map = new WholeRegionUI(polyList,photo,photographer,
-//                              new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"));
-
-//                      frame.add(map);
-//                      map.setVisible(true);
-//                      frame.setVisible(true);
-
-
-
-//                          JLabel label =new JLabel()
-//                                              {
-//                                     @Override
-//                                     protected void paintComponent(Graphics g) {
-//                                          super.paintComponent(g);
-//                                          g.setColor(Color.YELLOW);
-//                                          for(Polygon eachPolygon: polyList){
-//                                              g.drawPolygon(eachPolygon); }
-//                                      }
-//                                      @Override
-//                                      public Dimension getPreferredSize() {
-//                                          return new Dimension(820, 580);
-//                                      }
+                      rangeSelected(featureTypes);
 //
-//                                          };
-//                      map.add(label);
-//                      label.setVisible(true);
-//                      map.setVisible(true);
-//                      frame.setVisible(true);
                   }
               }
     }
@@ -244,6 +191,46 @@ public class FrontEnd extends JLabel {
             featureTypes.add(FeatureType.PHOTOGRAPHER);
         }
         return featureTypes;
+    }
+
+    /*
+   This method is called when whole region query is selected and submitted.
+    */
+    private void wholeSelected(List<FeatureType> featureTypes)
+    {
+        QueryDatabase queryDatabase = new QueryDatabase();
+        List<Polygon> polyList = queryDatabase.getWholePolygons(featureTypes);
+        List<ArrayList<Integer>> allPhotoGeo = queryDatabase.getWholePhotoPoints(featureTypes);
+        List<ArrayList<Integer>> allPhotographerGeo = queryDatabase.getWholePhotographerPoints(featureTypes);
+
+        frame.remove(map);
+        map = new WholeRegionUI(polyList,allPhotoGeo,allPhotographerGeo,
+                new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"));
+        map.setVerticalAlignment(SwingConstants.TOP);
+        frame.add(map);
+        map.setLayout(new FlowLayout());
+        frame.setVisible(true);
+    }
+
+
+    private void rangeSelected(List<FeatureType> featureTypes)
+    {
+        Helper helper = new Helper();
+        String polygonPoints = helper.pointToString(RangeUI.getPolygonPoints());
+        QueryDatabase queryDatabase = new QueryDatabase();
+
+        final List<Polygon> polyList = queryDatabase.getRangePolygons(featureTypes,polygonPoints);
+        List<ArrayList<Integer>> photo = queryDatabase.getRangePhotoPoints(featureTypes,polygonPoints);
+        List<ArrayList<Integer>> photographer = queryDatabase.getRangePhotographerPoints(featureTypes,polygonPoints);
+
+        frame.remove(map);
+        map = new WholeRegionUI(polyList,photo,photographer,
+                              new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"));
+
+                      frame.add(map);
+                      map.setVisible(true);
+                      frame.setVisible(true);
+
     }
 
 
