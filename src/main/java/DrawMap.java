@@ -3,7 +3,7 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-public class WholeRegionUI extends JLabel{
+public class DrawMap extends JLabel{
 
     List<Polygon> polyList;
     ImageIcon imageIcon;
@@ -13,8 +13,8 @@ public class WholeRegionUI extends JLabel{
 
 
 
-    public WholeRegionUI(java.util.List<Polygon> polyList, java.util.List<ArrayList<Integer>> allPhotoGeo,
-                         List<ArrayList<Integer>> allPhotographerGeo, ImageIcon imageIcon)
+    public DrawMap(java.util.List<Polygon> polyList, java.util.List<ArrayList<Integer>> allPhotoGeo,
+                   List<ArrayList<Integer>> allPhotographerGeo, ImageIcon imageIcon)
     {
         super(imageIcon,SwingConstants.LEFT);
         this.polyList = polyList;
@@ -70,7 +70,7 @@ public class WholeRegionUI extends JLabel{
      */
     public static  void setRangePolygon(List<Polygon> rangePolygon)
     {
-        WholeRegionUI.rangePolygon = rangePolygon;
+        DrawMap.rangePolygon = rangePolygon;
     }
 
 }

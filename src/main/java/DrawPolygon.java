@@ -9,7 +9,7 @@ import java.util.List;
 /**
  This class draws the polygon on the map
  */
-class RangeUI extends JLabel
+class DrawPolygon extends JLabel
         implements MouseListener, MouseMotionListener {
     private boolean polygonIsNowComplete = false;
 
@@ -24,7 +24,7 @@ class RangeUI extends JLabel
     private static ArrayList points = new ArrayList();
 
 
-    RangeUI(ImageIcon image)
+    DrawPolygon(ImageIcon image)
     {
         super(image,SwingConstants.LEFT);
         addMouseListener(this);

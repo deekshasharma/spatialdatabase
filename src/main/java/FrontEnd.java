@@ -1,10 +1,7 @@
-import com.sun.xml.internal.messaging.saaj.packaging.mime.util.QEncoderStream;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.font.NumericShaper;
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
@@ -116,7 +113,7 @@ public class FrontEnd extends JLabel {
         public void actionPerformed (ActionEvent e)
         {
             frame.remove(map);
-            map = new RangeUI(new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"));
+            map = new DrawPolygon(new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"));
             frame.add(map);
             frame.setVisible(true);
             map.setVisible(true);
@@ -124,7 +121,9 @@ public class FrontEnd extends JLabel {
 
     }
 
-
+    /*
+    Query Text Field functionality
+     */
 
     private void setQueryTextField()
     {
@@ -144,7 +143,9 @@ public class FrontEnd extends JLabel {
         frame.setVisible(true);
     }
 
-
+    /*
+    Submit button functionality
+     */
     private void addSubmit()
     {
         submitButton = new JButton("Submit Query");
@@ -205,7 +206,7 @@ public class FrontEnd extends JLabel {
         List<ArrayList<Integer>> allPhotographerGeo = queryDatabase.getWholePhotographerPoints(featureTypes);
 
         frame.remove(map);
-        map = new WholeRegionUI(polyList,allPhotoGeo,allPhotographerGeo,
+        map = new DrawMap(polyList,allPhotoGeo,allPhotographerGeo,
                 new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"));
         map.setVerticalAlignment(SwingConstants.TOP);
         frame.add(map);
@@ -213,13 +214,16 @@ public class FrontEnd extends JLabel {
         frame.setVisible(true);
     }
 
+     /*
+   This method is called when range query is selected and submitted.
+    */
 
     private void rangeSelected(List<FeatureType> featureTypes)
     {
         Helper helper = new Helper();
-        String polygonPoints = helper.pointToString(RangeUI.getPolygonPoints());
-        int[] xRangePoly = helper.getX(RangeUI.getPolygonPoints());
-        int[] yRangePoly = helper. getY(RangeUI.getPolygonPoints());
+        String polygonPoints = helper.pointToString(DrawPolygon.getPolygonPoints());
+        int[] xRangePoly = helper.getX(DrawPolygon.getPolygonPoints());
+        int[] yRangePoly = helper. getY(DrawPolygon.getPolygonPoints());
         Polygon rangePolygon = new Polygon(xRangePoly,yRangePoly,xRangePoly.length);
         List<Polygon> rangePolygonList = new ArrayList<Polygon>();
         rangePolygonList.add(rangePolygon);
@@ -230,8 +234,8 @@ public class FrontEnd extends JLabel {
         List<ArrayList<Integer>> photographer = queryDatabase.getRangePhotographerPoints(featureTypes,polygonPoints);
 
         frame.remove(map);
-        WholeRegionUI.setRangePolygon(rangePolygonList);
-        map = new WholeRegionUI(polyList,photo,photographer,
+        DrawMap.setRangePolygon(rangePolygonList);
+        map = new DrawMap(polyList,photo,photographer,
                                 new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"));
                       frame.add(map);
                       map.setVisible(true);
