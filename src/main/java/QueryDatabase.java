@@ -1,6 +1,7 @@
 import oracle.spatial.geometry.JGeometry;
 import oracle.sql.STRUCT;
 import java.awt.*;
+import java.lang.reflect.Array;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,22 +13,23 @@ public class QueryDatabase {
     private static DatabaseConnection dbConnection = new DatabaseConnection();
     private static Connection connection = dbConnection.getConnection();
 
-//    public QueryDatabase(DatabaseConnection dbConnection, Connection connection) {
-//        this.dbConnection = dbConnection;
-//        this.connection = connection;
-//    }
 
     public static void main(String[] args) {
         QueryDatabase database = new QueryDatabase();
-        List<FeatureType> featureTypes = new ArrayList<FeatureType>();
+        String point = " 220,110,NULL";
+        database.getNearestPhotographer(point);
+
+//        List<FeatureType> featureTypes = new ArrayList<FeatureType>();
 //        featureTypes.add(FeatureType.BUILDING);
-        featureTypes.add(FeatureType.PHOTO);
+//        featureTypes.add(FeatureType.PHOTO);
 //        featureTypes.add(FeatureType.PHOTOGRAPHER);
-        String s = "323,200,479,417,690,244,585,59,327,200,327,200";
+//        String s = "323,200,479,417,690,244,585,59,327,200,327,200";
 //        database.getRangePolygons(featureTypes,s);
-        database.getRangePhotoPoints(featureTypes,s);
+//        database.getRangePhotoPoints(featureTypes,s);
 //        database.getRangePhotographerPoints(featureTypes);
         dbConnection.closeConnection();
+
+
     }
     /*
     This method returns the List of ArrayList containing coordinates of each building
@@ -259,6 +261,20 @@ public class QueryDatabase {
             allPhotographerGeo = queryPhotographerTable(photographerGeo);
         }
         return allPhotographerGeo;
+    }
+
+
+    protected List<ArrayList<Integer>> getNearestPhotographer(String point)
+    {
+        List<ArrayList<Integer>> photographerLoc = new ArrayList<ArrayList<Integer>>();
+        String query = "(SELECT Ph.PHOTOGRAPHERLOC FROM photographer Ph  WHERE \n" +
+                "SDO_NN(Ph.photographerloc, mdsys.sdo_geometry(2001, null, " +
+//                "mdsys.sdo_point_type(220,110,NULL), NULL, NULL), 'sdo_num_res=1') = 'TRUE')";
+                "mdsys.sdo_point_type("+point+"), NULL, NULL), 'sdo_num_res=1') = 'TRUE')";
+        photographerLoc = queryPhotographerTable(query);
+        System.out.println(photographerLoc);
+        return photographerLoc;
+
     }
 
 

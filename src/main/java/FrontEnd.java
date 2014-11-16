@@ -27,6 +27,8 @@ public class FrontEnd extends JLabel {
     private JPanel panel;
     private JPanel panel1;
 
+    private String path = "/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG";
+
     public FrontEnd()
     {
 
@@ -92,7 +94,11 @@ public class FrontEnd extends JLabel {
         range.addActionListener(new rangeRadioAction());
 
         group.add(point);
+
         group.add(findPhoto);
+        findPhoto.addActionListener(new photoRadioAction());
+
+
         group.add(findPhotographer);
 
         panel1.add(query);
@@ -106,7 +112,7 @@ public class FrontEnd extends JLabel {
 
     }
       /*
-      Allows the user to draw the polygon once range radio button is checked.
+      Allows the user to draw the polygon once Range Query radio button is checked.
        */
      class rangeRadioAction implements ActionListener{
 
@@ -118,7 +124,17 @@ public class FrontEnd extends JLabel {
             frame.setVisible(true);
             map.setVisible(true);
         }
+    }
 
+    class photoRadioAction implements ActionListener{
+        public void actionPerformed(ActionEvent e)
+        {
+            frame.remove(map);
+            map = new FindPhotoMap(new ImageIcon(path));
+            frame.add(map);
+            frame.setVisible(true);
+            map.setVisible(true);
+        }
     }
 
     /*
