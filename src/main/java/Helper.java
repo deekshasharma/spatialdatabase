@@ -11,8 +11,10 @@ public class Helper {
 //        polyPoints.add(new Point(6,7));
 //        polyPoints.add(new Point(9,8));
 //
+//        Helper helper = new Helper();
 //        System.out.println(polyPoints.size());
-//        pointToString(polyPoints);
+//        System.out.println(Arrays.toString(helper.getX(polyPoints)));
+//        System.out.println(Arrays.toString(helper.getY(polyPoints)));
 //    }
 
     protected String pointToString(java.util.List<Point> polygonPoints)
@@ -34,15 +36,33 @@ public class Helper {
     }
 
 
-
-    protected void pointToIntegerList(List<Point> polygonPoints)
+  /*
+  Return an array of xCoordinates for a polygon
+   */
+    protected int[] getX(List<Point> polygonPoints)
     {
         int[] xPoints = new int[polygonPoints.size()];
         for(int i = 0; i < xPoints.length; i++)
         {
-//            xPoints[i] = ()polygonPoints.get(i).getX();
+            Double x = polygonPoints.get(i).getX();
+            xPoints[i] = x.intValue();
         }
+        return xPoints;
+    }
 
 
+     /*
+  Return an array of yCoordinates for a polygon
+   */
+    protected int[] getY(List<Point> polygonPoints)
+    {
+        int[] yPoints = new int[polygonPoints.size()];
+        for(int i = 0; i < yPoints.length; i++)
+        {
+            Double y = polygonPoints.get(i).getY();
+            yPoints[i] = y.intValue();
         }
+        return yPoints;
+    }
+
 }

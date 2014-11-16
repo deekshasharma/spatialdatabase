@@ -3,6 +3,7 @@ import com.sun.xml.internal.messaging.saaj.packaging.mime.util.QEncoderStream;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.font.NumericShaper;
 import java.lang.reflect.Array;
 import java.util.*;
 import java.util.List;
@@ -217,16 +218,21 @@ public class FrontEnd extends JLabel {
     {
         Helper helper = new Helper();
         String polygonPoints = helper.pointToString(RangeUI.getPolygonPoints());
-        QueryDatabase queryDatabase = new QueryDatabase();
+        int[] xRangePoly = helper.getX(RangeUI.getPolygonPoints());
+        int[] yRangePoly = helper. getY(RangeUI.getPolygonPoints());
+        Polygon rangePolygon = new Polygon(xRangePoly,yRangePoly,xRangePoly.length);
+        List<Polygon> rangePolygonList = new ArrayList<Polygon>();
+        rangePolygonList.add(rangePolygon);
 
+        QueryDatabase queryDatabase = new QueryDatabase();
         final List<Polygon> polyList = queryDatabase.getRangePolygons(featureTypes,polygonPoints);
         List<ArrayList<Integer>> photo = queryDatabase.getRangePhotoPoints(featureTypes,polygonPoints);
         List<ArrayList<Integer>> photographer = queryDatabase.getRangePhotographerPoints(featureTypes,polygonPoints);
 
         frame.remove(map);
+        WholeRegionUI.setRangePolygon(rangePolygonList);
         map = new WholeRegionUI(polyList,photo,photographer,
-                              new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"));
-
+                                new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"));
                       frame.add(map);
                       map.setVisible(true);
                       frame.setVisible(true);

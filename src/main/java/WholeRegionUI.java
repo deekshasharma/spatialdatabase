@@ -9,7 +9,7 @@ public class WholeRegionUI extends JLabel{
     ImageIcon imageIcon;
     List<ArrayList<Integer>> allPhotoGeo;
     List<ArrayList<Integer>> allPhotographerGeo;
-    List<Polygon> rangepolygon;
+    private static List<Polygon> rangePolygon;
 
 
 
@@ -27,11 +27,19 @@ public class WholeRegionUI extends JLabel{
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.setColor(Color.YELLOW);
+        if(rangePolygon.size() > 0)
+        {
+            g.setColor(Color.RED);
+            g.drawPolygon(rangePolygon.get(0));
+        }
         if(polyList.size() > 0)
         {
             for(Polygon poly:polyList)
-            {g.drawPolygon(poly);}
+
+            {
+                g.setColor(Color.YELLOW);
+                g.drawPolygon(poly);
+            }
         }
         if(allPhotoGeo.size() > 0)
         {
@@ -57,9 +65,12 @@ public class WholeRegionUI extends JLabel{
     }
 
 
-    protected void setRangepolygon(List<Polygon> rangepolygon)
+    /*
+    This method sets the red polygon for the range query
+     */
+    public static  void setRangePolygon(List<Polygon> rangePolygon)
     {
-        this.rangepolygon = rangepolygon;
+        WholeRegionUI.rangePolygon = rangePolygon;
     }
 
 }

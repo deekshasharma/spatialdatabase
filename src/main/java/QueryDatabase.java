@@ -20,12 +20,12 @@ public class QueryDatabase {
     public static void main(String[] args) {
         QueryDatabase database = new QueryDatabase();
         List<FeatureType> featureTypes = new ArrayList<FeatureType>();
-        featureTypes.add(FeatureType.BUILDING);
-//        featureTypes.add(FeatureType.PHOTO);
+//        featureTypes.add(FeatureType.BUILDING);
+        featureTypes.add(FeatureType.PHOTO);
 //        featureTypes.add(FeatureType.PHOTOGRAPHER);
         String s = "323,200,479,417,690,244,585,59,327,200,327,200";
-        database.getRangePolygons(featureTypes,s);
-//        database.getRangePhotoPoints(featureTypes);
+//        database.getRangePolygons(featureTypes,s);
+        database.getRangePhotoPoints(featureTypes,s);
 //        database.getRangePhotographerPoints(featureTypes);
         dbConnection.closeConnection();
     }
@@ -215,7 +215,6 @@ public class QueryDatabase {
                         "MDSYS.SDO_ORDINATE_ARRAY("+polyPoints+")),'mask = anyinteract') = 'TRUE')\n";
 
                         List<ArrayList<Integer>> allBuildingsGeo = queryBuildingTable(buildingGeo);
-                System.out.println("Coordinates of all buildings: "+allBuildingsGeo);
                 for (int i = 0; i < allBuildingsGeo.size(); i++) {
                     int[] xPoly = separatePolyCoordinates(allBuildingsGeo.get(i), 0);
                     int[] yPoly = separatePolyCoordinates(allBuildingsGeo.get(i), 1);
@@ -235,13 +234,12 @@ public class QueryDatabase {
 
         if(featureTypes.contains(FeatureType.PHOTO))
         {
-            String photoGeo = "select P.PHOTOCOORDINATES from photo P\n" +
-                    "where MDSYS.SDO_RELATE( P.PHOTOCOORDINATES,\n" +
+            String photoGeo = "(select P.PHOTOCOORDINATES from photo P\n" +
+                    "where MDSYS.SDO_RELATE(P.PHOTOCOORDINATES,\n" +
                     "MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,1)," +
                     "MDSYS.SDO_ORDINATE_ARRAY("+polyPoints+")),'mask = anyinteract') = 'TRUE')\n";
             allPhotoGeo = queryPhotoTable(photoGeo);
         }
-        System.out.println(allPhotoGeo);
         return allPhotoGeo;
     }
 
@@ -254,13 +252,12 @@ public class QueryDatabase {
 
         if(featureTypes.contains(FeatureType.PHOTOGRAPHER))
         {
-            String photographerGeo = "select Ph.PHOTOGRAPHERLOC from photographer Ph\n" +
+            String photographerGeo = "(select Ph.PHOTOGRAPHERLOC from photographer Ph\n" +
                     "where MDSYS.SDO_RELATE(Ph.PHOTOGRAPHERLOC,\n" +
                     "MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,1)," +
                     "MDSYS.SDO_ORDINATE_ARRAY("+polyPoints+")),'mask = anyinteract') = 'TRUE')\n";
             allPhotographerGeo = queryPhotographerTable(photographerGeo);
         }
-        System.out.println(allPhotographerGeo);
         return allPhotographerGeo;
     }
 
