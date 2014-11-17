@@ -4,20 +4,23 @@ import java.util.List;
 
 public class Helper {
 
-//    public static void main(String[] args) {
+    public static void main(String[] args) {
 //        List<Point> polyPoints = new ArrayList<Point>();
 //        polyPoints.add(new Point(2,3));
 //        polyPoints.add(new Point(4,5));
 //        polyPoints.add(new Point(6,7));
 //        polyPoints.add(new Point(9,8));
 //
-//        Helper helper = new Helper();
+        Helper helper = new Helper();
 //        System.out.println(polyPoints.size());
 //        System.out.println(Arrays.toString(helper.getX(polyPoints)));
 //        System.out.println(Arrays.toString(helper.getY(polyPoints)));
-//    }
+        Point p = new Point(3,4);
+        System.out.println(helper.toStringPoint(p));
 
-    protected String pointToString(java.util.List<Point> polygonPoints)
+    }
+
+    protected String toStringPolygon(java.util.List<Point> polygonPoints)
     {
         StringBuilder points = new StringBuilder();
          for(Point p : polygonPoints)
@@ -63,6 +66,22 @@ public class Helper {
             yPoints[i] = y.intValue();
         }
         return yPoints;
+    }
+
+    /*
+    This method converts the coordinates of a point to String
+     */
+    protected String toStringPoint(Point p)
+    {
+        StringBuilder points = new StringBuilder();
+        Double x = p.getX();
+        Double y = p.getY();
+        int x1 = x.intValue();
+        int y1 = y.intValue();
+
+        points.append(x1).append(",").append(y1).append(",").append("null");
+
+        return points.toString();
     }
 
 }

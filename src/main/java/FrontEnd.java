@@ -1,7 +1,7 @@
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
@@ -29,6 +29,7 @@ public class FrontEnd extends JLabel {
 
     private String path = "/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG";
 
+
     public FrontEnd()
     {
 
@@ -46,6 +47,7 @@ public class FrontEnd extends JLabel {
         FrontEnd image = new FrontEnd();
 
         image.setMap();
+
         image.setActiveFeature();
         image.setQuery();
         image.addSubmit();
@@ -54,7 +56,8 @@ public class FrontEnd extends JLabel {
 
     private void setMap()
     {
-        map = new JLabel(new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"),SwingConstants.LEFT);
+        map = new DrawMap(new ImageIcon(path));
+//        map = new JLabel(new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"),SwingConstants.LEFT);
         map.setVerticalAlignment(SwingConstants.TOP);
         frame.add(map);
         map.setLayout(new FlowLayout());
@@ -94,6 +97,7 @@ public class FrontEnd extends JLabel {
         range.addActionListener(new rangeRadioAction());
 
         group.add(point);
+        point.addActionListener(new pointRadioAction());
 
         group.add(findPhoto);
         findPhoto.addActionListener(new photoRadioAction());
@@ -112,7 +116,7 @@ public class FrontEnd extends JLabel {
 
     }
       /*
-      Allows the user to draw the polygon once Range Query radio button is checked.
+      Handles the action of Range Query radio button
        */
      class rangeRadioAction implements ActionListener{
 
@@ -126,14 +130,35 @@ public class FrontEnd extends JLabel {
         }
     }
 
+   /*
+      Handles the action of Find Photos radio button
+       */
+    class pointRadioAction implements ActionListener{
+       public void  actionPerformed(ActionEvent e)
+       {
+           List<Polygon> polygonList = new ArrayList<Polygon>();
+           List<ArrayList<Integer>> photo = new ArrayList<ArrayList<Integer>>();
+           List<ArrayList<Integer>> photographer = new ArrayList<ArrayList<Integer>>();
+           DrawMap.setPolyList(polygonList);
+           DrawMap.setAllPhotoGeo(photo);
+           DrawMap.setAllPhotographerGeo(photographer);
+           map.repaint();
+       }
+   }
+
+
+
+    /*
+      Handles the action of Find Photos radio button
+       */
     class photoRadioAction implements ActionListener{
         public void actionPerformed(ActionEvent e)
         {
-            frame.remove(map);
-            map = new FindPhotoMap(new ImageIcon(path));
-            frame.add(map);
-            frame.setVisible(true);
-            map.setVisible(true);
+            List<FeatureType> featureTypes = new ArrayList<FeatureType>();
+            featureTypes.add(FeatureType.BUILDING);
+            featureTypes.add(FeatureType.PHOTO);
+            featureTypes.add(FeatureType.PHOTOGRAPHER);
+            wholeSelected(featureTypes);
         }
     }
 
@@ -220,14 +245,19 @@ public class FrontEnd extends JLabel {
         List<Polygon> polyList = queryDatabase.getWholePolygons(featureTypes);
         List<ArrayList<Integer>> allPhotoGeo = queryDatabase.getWholePhotoPoints(featureTypes);
         List<ArrayList<Integer>> allPhotographerGeo = queryDatabase.getWholePhotographerPoints(featureTypes);
+        DrawMap.setPolyList(polyList);
+        DrawMap.setAllPhotoGeo(allPhotoGeo);
+        DrawMap.setAllPhotographerGeo(allPhotographerGeo);
+        map.repaint();
 
-        frame.remove(map);
-        map = new DrawMap(polyList,allPhotoGeo,allPhotographerGeo,
-                new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"));
-        map.setVerticalAlignment(SwingConstants.TOP);
-        frame.add(map);
-        map.setLayout(new FlowLayout());
-        frame.setVisible(true);
+
+//        frame.remove(map);
+//        map = new DrawMap(polyList,allPhotoGeo,allPhotographerGeo,
+//                new ImageIcon(path));
+//        map.setVerticalAlignment(SwingConstants.TOP);
+//        frame.add(map);
+//        map.setLayout(new FlowLayout());
+//        frame.setVisible(true);
     }
 
      /*
@@ -237,7 +267,7 @@ public class FrontEnd extends JLabel {
     private void rangeSelected(List<FeatureType> featureTypes)
     {
         Helper helper = new Helper();
-        String polygonPoints = helper.pointToString(DrawPolygon.getPolygonPoints());
+        String polygonPoints = helper.toStringPolygon(DrawPolygon.getPolygonPoints());
         int[] xRangePoly = helper.getX(DrawPolygon.getPolygonPoints());
         int[] yRangePoly = helper. getY(DrawPolygon.getPolygonPoints());
         Polygon rangePolygon = new Polygon(xRangePoly,yRangePoly,xRangePoly.length);
@@ -251,11 +281,21 @@ public class FrontEnd extends JLabel {
 
         frame.remove(map);
         DrawMap.setRangePolygon(rangePolygonList);
-        map = new DrawMap(polyList,photo,photographer,
-                                new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"));
+//        map = new DrawMap(polyList,photo,photographer,
+//                                new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"));
                       frame.add(map);
                       map.setVisible(true);
                       frame.setVisible(true);
+    }
+
+
+    public static Point getNearestPhotographer(Point p)
+    {
+        Helper helper = new Helper();
+        String pointCoordinates = helper.toStringPoint(p);
+        QueryDatabase queryDatabase = new QueryDatabase();
+        Point nearestPhotographer = queryDatabase.getNearestPhotographer(pointCoordinates);
+        return nearestPhotographer;
 
     }
 
