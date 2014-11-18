@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     private static boolean displayPhotos = false;
     private static boolean displayPhotographers = false;
     private static boolean displayCircleAroundPoint = false;
+    private static StringBuilder circleCoordinates;// = new StringBuilder();
 
 
 
@@ -106,28 +108,37 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if(displayBuildings){
+        if (displayBuildings) {
             drawBuilding(g);
+            System.out.println("drawing building");
             displayBuildings = false;
         }
-        if(displayPhotos){
+        if (displayPhotos) {
             drawPhoto(g);
+            System.out.println("drawing photo");
+
             displayPhotos = false;
         }
-        if(displayPhotographers)
-        {
+        if (displayPhotographers) {
             drawPhotographer(g);
+            System.out.println("drawing photographer");
+
             displayPhotographers = false;
         }
-        if(allowToDrawPoint)
-        {drawPoint(g); }
-        if(displayCircleAroundPoint)
-        {
+        if (allowToDrawPoint) {
+            drawPoint(g);
+            System.out.println("drawing point");
+
+//            allowToDrawPoint = false;
+        }
+        if (displayCircleAroundPoint) {
             drawCircleAroundPoint(g);
+            System.out.println("drawing circle");
+
             displayCircleAroundPoint = false;
         }
 
-
+    }
 
 
 //        try{
@@ -143,9 +154,9 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
 //
 //        drawNearestPhotographer(g);
 
-    }
+//    }
 
-    /* This method sets the polList for all the building coordinates*/
+    /* This method sets the polyList for all the building coordinates*/
     public static   void setPolyList(List<Polygon> polyList){
 
         DrawMap.polyList = polyList;
@@ -170,28 +181,49 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     }
 
     /*
-
+       Sets the boolean flag to display buildings
      */
     public static void setDisplayBuildings(boolean b)
     {
         displayBuildings = b;
     }
 
+/*
+       Sets the boolean flag to display photos
+     */
+
     public static void setDisplayPhotos(boolean b)
     {
         displayPhotos = b;
     }
+
+    /*
+       Sets the boolean flag to display photographers
+     */
 
     public static void setDisplayPhotographers(boolean b)
     {
         displayPhotographers = b;
     }
 
+    /*
+       Sets the boolean flag to display point
+     */
+
     public static void setAllowToDrawPoint(boolean b)
     {
         allowToDrawPoint = b;
     }
 
+
+    /*
+    Returns the circleCoordinates list
+     */
+
+    public static String getCircleCoordinates()
+    {
+        return circleCoordinates.toString();
+    }
 
     @Override
     public Dimension getPreferredSize()
@@ -318,7 +350,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     }
 
     /*
-    This method draw the point on the map
+    This method draw the point on the map for Point Query
      */
 
     private void drawPoint(Graphics g)
@@ -330,20 +362,31 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
                     g.fillOval(x.intValue(), y.intValue(), 10, 10);
                 }
                 displayCircleAroundPoint = true;
-                repaint();
     }
 
+    /*
+    This method draw circle around the point chosen by user for Point Query
+     */
     private void drawCircleAroundPoint(Graphics g)
     {
         Double x = pointClicked.getX();
         Double y = pointClicked.getY();
+        int radius = 100;
         g.setColor(Color.RED);
-        g.drawOval(x.intValue() - 100,y.intValue() - 100,2*100,2*100);
+        g.drawOval(x.intValue() - radius,y.intValue() - radius,2*radius,2*radius);
+
+        circleCoordinates = new StringBuilder();
+        circleCoordinates.append(x.intValue()).append(",")
+                .append(y.intValue() - radius).append(",")
+                .append((x.intValue()+radius)).append(",")
+                .append(y.intValue()).append(",")
+                .append(x.intValue()).append(",")
+                .append(y.intValue() + radius);
     }
 
 
     /*
-    This method draws the photographer in red that is nearest to teh selected point.
+    This method draws nearest photographer to the point for Find photos query
      */
     private void drawNearestPhotographer(Graphics graphics)
     {

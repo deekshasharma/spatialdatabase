@@ -146,7 +146,7 @@ public class QueryDatabase {
     }
 
  /*
-    Returns a list of all building / polygons retrieved from database.
+    Returns a list of all building / polygons for Whole query#1
   */
     protected List<Polygon> getWholePolygons(List<FeatureType> featureTypes)
     {
@@ -154,8 +154,8 @@ public class QueryDatabase {
         List<Polygon> polyList = new ArrayList<Polygon>();
         String buildingGeo = "select GEO from building";
 
-        if(featureTypes.contains(FeatureType.BUILDING))
-        {
+//        if(featureTypes.contains(FeatureType.BUILDING))
+//        {
                 List<ArrayList<Integer>> allBuildingsGeo = queryBuildingTable(buildingGeo);
                 for (int i = 0; i < allBuildingsGeo.size(); i++) {
                     int[] xPoly = separatePolyCoordinates(allBuildingsGeo.get(i), 0);
@@ -163,53 +163,51 @@ public class QueryDatabase {
                     polygon = new Polygon(xPoly, yPoly, xPoly.length);
                     polyList.add(polygon);
                 }
-        }
+//        }
         return polyList;
     }
 
     /*
-    Returns a list of all photo coordinates from the data base
+    Returns a list of all photo coordinates for Whole query#1
      */
     protected List<ArrayList<Integer>> getWholePhotoPoints(List<FeatureType> featureTypes)
     {
         List<ArrayList<Integer>> allPhotoGeo = new ArrayList<ArrayList<Integer>>();
 
-       if(featureTypes.contains(FeatureType.PHOTO))
-       {
+//       if(featureTypes.contains(FeatureType.PHOTO))
+//       {
             String photoGeo = "select PHOTOCOORDINATES from photo";
            allPhotoGeo = queryPhotoTable(photoGeo);
-       }
+//       }
          return allPhotoGeo;
     }
 
     /*
-    Returns the list of all photographer coordinates from the database.
+    Returns the list of all photographer coordinates for Whole query#1
      */
     protected List<ArrayList<Integer>> getWholePhotographerPoints(List<FeatureType> featureTypes)
     {
         List<ArrayList<Integer>> allPhotographerGeo = new ArrayList<ArrayList<Integer>>();
 
-        if(featureTypes.contains(FeatureType.PHOTOGRAPHER))
-        {
+//        if(featureTypes.contains(FeatureType.PHOTOGRAPHER))
+//        {
             String photographerGeo = "select PHOTOGRAPHERLOC from photographer";
             allPhotographerGeo = queryPhotographerTable(photographerGeo);
-        }
+//        }
             return allPhotographerGeo;
     }
 
 
     /*
-    Returns List of all polygons for Range Query
+    Returns List of all polygons for Range Query#2
      */
     protected List<Polygon> getRangePolygons(List<FeatureType> featureTypes, String polyPoints)
     {
         Polygon polygon;
         List<Polygon> polyList = new ArrayList<Polygon>();
 
-
             if (featureTypes.contains(FeatureType.BUILDING))
             {
-
                 String buildingGeo = "(select B.GEO from building B\n" +
                         "where MDSYS.SDO_RELATE(B.GEO, \n" +
                         "MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,1)," +
@@ -227,7 +225,7 @@ public class QueryDatabase {
     }
 
     /*
-    Returns List of all PhotoCoordinates for Range Query
+    Returns List of all PhotoCoordinates for Range Query#2
      */
     protected List<ArrayList<Integer>> getRangePhotoPoints(List<FeatureType> featureTypes, String polyPoints)
     {
@@ -245,7 +243,7 @@ public class QueryDatabase {
     }
 
     /*
-    Returns the list of all Photographer Coordinates for Range query
+    Returns the list of all Photographer Coordinates for Range query#2
      */
     protected List<ArrayList<Integer>> getRangePhotographerPoints(List<FeatureType> featureTypes, String polyPoints)
     {
@@ -262,7 +260,60 @@ public class QueryDatabase {
         return allPhotographerGeo;
     }
 
+    /*
+    Returns the list of polygons inside/intersecting circle for query#3
+     */
+    protected List<Polygon>  getBuildingsWithinCircle(String circlePoints)
+    {
+        Polygon polygon;
+        List<Polygon> polyList = new ArrayList<Polygon>();
 
+                String buildingGeo = "(select B.GEO from building B\n" +
+                    "where MDSYS.SDO_RELATE(B.GEO, \n" +
+                    "MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,4)," +
+                    "MDSYS.SDO_ORDINATE_ARRAY("+circlePoints+")),'mask = anyinteract') = 'TRUE')\n";
+
+            List<ArrayList<Integer>> allBuildingsGeo = queryBuildingTable(buildingGeo);
+            for (int i = 0; i < allBuildingsGeo.size(); i++)
+            {
+                int[] xPoly = separatePolyCoordinates(allBuildingsGeo.get(i), 0);
+                int[] yPoly = separatePolyCoordinates(allBuildingsGeo.get(i), 1);
+                polygon = new Polygon(xPoly, yPoly, xPoly.length);
+                polyList.add(polygon);
+            }
+        return polyList;
+
+    }
+
+    /*
+    Returns List of all PhotoCoordinates for Point Query#3
+     */
+    protected List<ArrayList<Integer>> getPhotoWithinCircle(String circlePoints)
+    {
+            String photoGeo = "(select P.PHOTOCOORDINATES from photo P\n" +
+                    "where MDSYS.SDO_RELATE(P.PHOTOCOORDINATES,\n" +
+                    "MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,4)," +
+                    "MDSYS.SDO_ORDINATE_ARRAY("+circlePoints+")),'mask = anyinteract') = 'TRUE')\n";
+            return queryPhotoTable(photoGeo);
+    }
+
+    /*
+   Returns the list of all Photographer Coordinates for Point query#3
+    */
+    protected List<ArrayList<Integer>> getPhotographerWithinCircle(String circlePoints)
+    {
+            String photographerGeo = "(select Ph.PHOTOGRAPHERLOC from photographer Ph\n" +
+                    "where MDSYS.SDO_RELATE(Ph.PHOTOGRAPHERLOC,\n" +
+                    "MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,4)," +
+                    "MDSYS.SDO_ORDINATE_ARRAY("+circlePoints+")),'mask = anyinteract') = 'TRUE')\n";
+            return queryPhotographerTable(photographerGeo);
+    }
+
+
+
+    /*
+    Returns the location point of the nearest photographer query #4
+     */
     protected Point getNearestPhotographer(String point)
     {
         List<ArrayList<Integer>> photographerLoc = new ArrayList<ArrayList<Integer>>();

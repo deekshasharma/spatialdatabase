@@ -212,16 +212,21 @@ public class FrontEnd extends JLabel {
               public void actionPerformed(ActionEvent e)
               {
                   e.getActionCommand();
+                  List<FeatureType> featureTypes;
                   if(whole.isSelected())
                   {
-                      List<FeatureType> featureTypes = getActiveFeatureType();
+                      featureTypes = getActiveFeatureType();
                       wholeSelected(featureTypes);
                   }
                   if(range.isSelected())
                   {
-                      List<FeatureType> featureTypes = getActiveFeatureType();
+                      featureTypes = getActiveFeatureType();
                       rangeSelected(featureTypes);
-//
+                  }
+                  if(point.isSelected())
+                  {
+                      featureTypes = getActiveFeatureType();
+                      pointSelected(featureTypes);
                   }
               }
     }
@@ -250,27 +255,25 @@ public class FrontEnd extends JLabel {
     private void wholeSelected(List<FeatureType> featureTypes)
     {
         QueryDatabase queryDatabase = new QueryDatabase();
-        List<Polygon> polyList = queryDatabase.getWholePolygons(featureTypes);
-        List<ArrayList<Integer>> allPhotoGeo = queryDatabase.getWholePhotoPoints(featureTypes);
-        List<ArrayList<Integer>> allPhotographerGeo = queryDatabase.getWholePhotographerPoints(featureTypes);
-
-        DrawMap.setDisplayBuildings(true);
-        DrawMap.setDisplayPhotos(true);
-        DrawMap.setDisplayPhotographers(true);
-
-        DrawMap.setPolyList(polyList);
-        DrawMap.setAllPhotoGeo(allPhotoGeo);
-        DrawMap.setAllPhotographerGeo(allPhotographerGeo);
+        if(featureTypes.contains(FeatureType.BUILDING))
+        {
+            List<Polygon> polyList = queryDatabase.getWholePolygons(featureTypes);
+            DrawMap.setPolyList(polyList);
+            DrawMap.setDisplayBuildings(true);
+        }
+        if(featureTypes.contains(FeatureType.PHOTO))
+        {
+            List<ArrayList<Integer>> allPhotoGeo = queryDatabase.getWholePhotoPoints(featureTypes);
+            DrawMap.setAllPhotoGeo(allPhotoGeo);
+            DrawMap.setDisplayPhotos(true);
+        }
+        if(featureTypes.contains(FeatureType.PHOTOGRAPHER))
+        {
+            List<ArrayList<Integer>> allPhotographerGeo = queryDatabase.getWholePhotographerPoints(featureTypes);
+            DrawMap.setAllPhotographerGeo(allPhotographerGeo);
+            DrawMap.setDisplayPhotographers(true);
+        }
         map.repaint();
-
-
-//        frame.remove(map);
-//        map = new DrawMap(polyList,allPhotoGeo,allPhotographerGeo,
-//                new ImageIcon(path));
-//        map.setVerticalAlignment(SwingConstants.TOP);
-//        frame.add(map);
-//        map.setLayout(new FlowLayout());
-//        frame.setVisible(true);
     }
 
      /*
@@ -302,6 +305,38 @@ public class FrontEnd extends JLabel {
     }
 
 
+    /*
+    This is called when point query is selected and submitted.
+     */
+    private void pointSelected(List<FeatureType> featureTypes)
+    {
+        String circleCoordinates = DrawMap.getCircleCoordinates();
+        QueryDatabase queryDatabase = new QueryDatabase();
+        if(featureTypes.contains(FeatureType.BUILDING))
+        {
+             List<Polygon> polygonList = queryDatabase.getBuildingsWithinCircle(circleCoordinates);
+             DrawMap.setPolyList(polygonList);
+            DrawMap.setDisplayBuildings(true);
+        }
+        if(featureTypes.contains(FeatureType.PHOTO))
+        {
+            List<ArrayList<Integer>>  photoPoints = queryDatabase.getPhotoWithinCircle(circleCoordinates);
+            DrawMap.setAllPhotoGeo(photoPoints);
+            DrawMap.setDisplayPhotos(true);
+        }
+        if(featureTypes.contains(FeatureType.PHOTOGRAPHER))
+        {
+            List<ArrayList<Integer>> photographerPoints = queryDatabase.getPhotographerWithinCircle(circleCoordinates);
+            DrawMap.setAllPhotographerGeo(photographerPoints);
+            DrawMap.setDisplayPhotographers(true);
+        }
+        map.repaint();
+    }
+
+
+    /*
+
+     */
     public static Point getNearestPhotographer(Point p)
     {
         Helper helper = new Helper();
