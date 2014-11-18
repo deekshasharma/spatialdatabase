@@ -13,10 +13,10 @@ public class QueryDatabase {
     private static Connection connection = dbConnection.getConnection();
 
 
-    public static void main(String[] args) {
-        QueryDatabase database = new QueryDatabase();
-        String point = " 220,110,NULL";
-        database.getNearestPhotographer(point);
+//    public static void main(String[] args) {
+//        QueryDatabase database = new QueryDatabase();
+//        String point = " 220,110,NULL";
+//        database.getNearestPhotographer(point);
 
 //        List<FeatureType> featureTypes = new ArrayList<FeatureType>();
 //        featureTypes.add(FeatureType.BUILDING);
@@ -29,7 +29,7 @@ public class QueryDatabase {
 //        dbConnection.closeConnection();
 
 
-    }
+//    }
     /*
     This method returns the List of ArrayList containing coordinates of each building
      */
@@ -282,7 +282,6 @@ public class QueryDatabase {
                 polyList.add(polygon);
             }
         return polyList;
-
     }
 
     /*
@@ -326,5 +325,18 @@ public class QueryDatabase {
         return (new Point(x,y));
     }
 
+    protected void getNearestPhotographerInCircle(String circlePoints, String center)
+    {
+        String query = "";
+        int x = queryPhotographerTable(query).get(0).get(0);
+        int y = queryPhotographerTable(query).get(0).get(0);
+    }
 
+    //"Select Ph.PHOTOGRAPHERLOC FROM photographer Ph  WHERE SDO_NN(Ph.photographerloc, mdsys.sdo_geometry(2001, null,mdsys.sdo_point_type("+point+"), NULL, NULL), 'sdo_num_res=1') = 'TRUE'
+    // AND ph.PHOTOGRAPHERLOC IN
+    // (select Ph.PHOTOGRAPHERLOC from photographer Ph where MDSYS.SDO_RELATE(Ph.PHOTOGRAPHERLOC,MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,4), MDSYS.SDO_ORDINATE_ARRAY("+circlePoints+")),'mask = anyinteract') = 'TRUE'))
+    // AND
+    //(select Ph.PHOTOGRAPHERLOC from photographer Ph where MDSYS.SDO_INSIDE(Ph.PHOTOGRAPHERLOC,MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,4),MDSYS.SDO_ORDINATE_ARRAY("+circlePoints+")) = 'TRUE')
+
+//    )
 }

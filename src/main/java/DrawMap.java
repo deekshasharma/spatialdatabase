@@ -5,15 +5,11 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.List;
 
 public class DrawMap extends JLabel implements MouseListener, MouseMotionListener{
 
-//    List<Polygon> polyList;
-//    List<ArrayList<Integer>> allPhotographerGeo;
-//    List<ArrayList<Integer>> allPhotoGeo;
     private static List<Polygon> polyList;
     ImageIcon imageIcon;
     private static List<ArrayList<Integer>> allPhotoGeo;
@@ -26,84 +22,19 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     private static boolean displayPhotos = false;
     private static boolean displayPhotographers = false;
     private static boolean displayCircleAroundPoint = false;
-    private static StringBuilder circleCoordinates;// = new StringBuilder();
+    private static StringBuilder circleCoordinates;
+    private static boolean greenFlag = true;
 
 
-
-//    public DrawMap(java.util.List<Polygon> polyList, java.util.List<ArrayList<Integer>> allPhotoGeo,
-//                   List<ArrayList<Integer>> allPhotographerGeo, ImageIcon imageIcon)
-//    {
-//        super(imageIcon,SwingConstants.LEFT);
-//        this.polyList = polyList;
-//        this.allPhotoGeo = allPhotoGeo;
-//        this.allPhotographerGeo = allPhotographerGeo;
-//        this.imageIcon = imageIcon;
-//        addMouseListener(this);
-//        addMouseMotionListener(this);
-//    }
 
     public DrawMap(ImageIcon imageIcon)
     {
         super(imageIcon,SwingConstants.LEFT);
-//        this.polyList = polyList;
-//        this.allPhotoGeo = allPhotoGeo;
-//        this.allPhotographerGeo = allPhotographerGeo;
         this.imageIcon = imageIcon;
         addMouseListener(this);
         addMouseMotionListener(this);
     }
 
-    /*
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        try{
-        if(rangePolygon.size() > 0)
-        {
-            g.setColor(Color.RED);
-            g.drawBuilding(rangePolygon.get(0));
-        }
-        }catch(NullPointerException e)
-        {
-            System.out.println("");
-        }
-        if(polyList.size() > 0)
-        {
-            for(Polygon poly:polyList)
-
-            {
-                g.setColor(Color.YELLOW);
-                g.drawBuilding(poly);
-            }
-        }
-        if(allPhotoGeo.size() > 0)
-        {
-            for(int i = 0; i < allPhotoGeo.size(); i++)
-                {
-                    g.drawOval(allPhotoGeo.get(i).get(0),allPhotoGeo.get(i).get(1),3,3);
-                    g.setColor(Color.BLUE);
-                }
-        }
-        if(allPhotographerGeo.size() > 0)
-        {
-            for(int i = 0; i < allPhotographerGeo.size(); i++)
-                {
-                    g.drawRect(allPhotographerGeo.get(i).get(0),allPhotographerGeo.get(i).get(1),5,5);
-                    g.setColor(Color.GREEN);
-                }
-        }
-
-        if (pointClicked != null) {
-            Double x = pointClicked.getX();
-            Double y = pointClicked.getY();
-            g.setColor(Color.RED);
-            g.fillOval(x.intValue(), y.intValue(), 10, 10);
-        }
-        drawNearestPhotographer(g);
-
-
-    }
-    */
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -141,20 +72,6 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     }
 
 
-//        try{
-//            if(rangePolygon.size() > 0)
-//            {
-//                g.setColor(Color.RED);
-//                g.drawBuilding(rangePolygon.get(0));
-//            }
-//        }catch(NullPointerException e)
-//        {
-//            System.out.println("");
-//        }
-//
-//        drawNearestPhotographer(g);
-
-//    }
 
     /* This method sets the polyList for all the building coordinates*/
     public static   void setPolyList(List<Polygon> polyList){
@@ -223,6 +140,14 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     public static String getCircleCoordinates()
     {
         return circleCoordinates.toString();
+    }
+
+    /*
+    Returns the pointClicked by the user.
+     */
+    public static Point getPointClicked()
+    {
+        return pointClicked;
     }
 
     @Override
@@ -295,7 +220,9 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
                 for(Polygon poly:polyList)
 
                 {
-                    g.setColor(Color.YELLOW);
+                    if(greenFlag)
+                    {g.setColor(Color.GREEN);}
+                    else{g.setColor(Color.YELLOW);}
                     g.drawPolygon(poly);
                 }
             }
@@ -318,8 +245,10 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
             {
                 for(int i = 0; i < allPhotoGeo.size(); i++)
                 {
-                    g.drawOval(allPhotoGeo.get(i).get(0),allPhotoGeo.get(i).get(1),6,6);
-                    g.setColor(Color.BLUE);
+                    if(greenFlag)
+                    {g.setColor(Color.GREEN);}
+                    else {g.setColor(Color.BLUE);}
+                    g.drawOval(allPhotoGeo.get(i).get(0), allPhotoGeo.get(i).get(1), 6, 6);
                 }
             }
         }catch (NullPointerException e)
@@ -339,18 +268,17 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
             {
                 for(int i = 0; i < allPhotographerGeo.size(); i++)
                 {
-                    g.drawRect(allPhotographerGeo.get(i).get(0),allPhotographerGeo.get(i).get(1),5,5);
                     g.setColor(Color.GREEN);
+                    g.drawRect(allPhotographerGeo.get(i).get(0),allPhotographerGeo.get(i).get(1),5,5);
                 }
             }
-//
         }catch (NullPointerException e){
             System.out.println("allPhotographerGeo list is empty");
         }
     }
 
     /*
-    This method draw the point on the map for Point Query
+    This method draw the point on the map for Point Query#3
      */
 
     private void drawPoint(Graphics g)
@@ -365,7 +293,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     }
 
     /*
-    This method draw circle around the point chosen by user for Point Query
+    This method draw circle around the point chosen by user for Point Query#3
      */
     private void drawCircleAroundPoint(Graphics g)
     {
@@ -384,9 +312,26 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
                 .append(y.intValue() + radius);
     }
 
+    /*
+    Draw the building nearest to center of circle Point query#3
+     */
+    private void drawBuildingNearCenter(Graphics g)
+    {
+        g.setColor(Color.YELLOW.darker());
+        g.drawPolygon();
+    }
 
     /*
-    This method draws nearest photographer to the point for Find photos query
+    Draw photo nearest to center of circle Point query#3
+     */
+    private void drawPhotoNearCenter(Graphics g)
+    {
+        g.setColor(Color.YELLOW.darker());
+        g.drawOval();
+    }
+
+    /*
+    This method draws nearest photographer to the point for Find photos query#4
      */
     private void drawNearestPhotographer(Graphics graphics)
     {
@@ -402,7 +347,6 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         {
             System.out.println("NearestPhotographer is null");
         }
-
     }
 
 

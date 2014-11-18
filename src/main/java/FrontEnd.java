@@ -311,6 +311,8 @@ public class FrontEnd extends JLabel {
     private void pointSelected(List<FeatureType> featureTypes)
     {
         String circleCoordinates = DrawMap.getCircleCoordinates();
+        Helper helper = new Helper();
+        String centerCoordinates = helper.toStringPoint(DrawMap.getPointClicked());
         QueryDatabase queryDatabase = new QueryDatabase();
         if(featureTypes.contains(FeatureType.BUILDING))
         {
