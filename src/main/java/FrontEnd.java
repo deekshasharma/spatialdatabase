@@ -91,7 +91,9 @@ public class FrontEnd extends JLabel {
         point = new JRadioButton("Point Query");
         findPhoto = new JRadioButton("Find photos");
         findPhotographer = new JRadioButton("Find photographer");
+
         group.add(whole);
+        whole.addActionListener(new wholeRadioAction());
 
         group.add(range);
         range.addActionListener(new rangeRadioAction());
@@ -115,6 +117,16 @@ public class FrontEnd extends JLabel {
         frame.setVisible(true);
 
     }
+
+    class wholeRadioAction implements ActionListener{
+        public void actionPerformed(ActionEvent e)
+        {
+            DrawMap.setDisplayBuildings(false);
+            DrawMap.setDisplayPhotos(false);
+            DrawMap.setDisplayPhotographers(false);
+            map.repaint();
+        }
+    }
       /*
       Handles the action of Range Query radio button
        */
@@ -136,13 +148,14 @@ public class FrontEnd extends JLabel {
     class pointRadioAction implements ActionListener{
        public void  actionPerformed(ActionEvent e)
        {
-           List<Polygon> polygonList = new ArrayList<Polygon>();
-           List<ArrayList<Integer>> photo = new ArrayList<ArrayList<Integer>>();
-           List<ArrayList<Integer>> photographer = new ArrayList<ArrayList<Integer>>();
-           DrawMap.setPolyList(polygonList);
-           DrawMap.setAllPhotoGeo(photo);
-           DrawMap.setAllPhotographerGeo(photographer);
-           map.repaint();
+//           List<Polygon> polygonList = new ArrayList<Polygon>();
+//           List<ArrayList<Integer>> photo = new ArrayList<ArrayList<Integer>>();
+//           List<ArrayList<Integer>> photographer = new ArrayList<ArrayList<Integer>>();
+//           DrawMap.setPolyList(polygonList);
+//           DrawMap.setAllPhotoGeo(photo);
+//           DrawMap.setAllPhotographerGeo(photographer);
+           DrawMap.setAllowToDrawPoint(true);
+//           map.repaint();
        }
    }
 
@@ -245,6 +258,11 @@ public class FrontEnd extends JLabel {
         List<Polygon> polyList = queryDatabase.getWholePolygons(featureTypes);
         List<ArrayList<Integer>> allPhotoGeo = queryDatabase.getWholePhotoPoints(featureTypes);
         List<ArrayList<Integer>> allPhotographerGeo = queryDatabase.getWholePhotographerPoints(featureTypes);
+
+        DrawMap.setDisplayBuildings(true);
+        DrawMap.setDisplayPhotos(true);
+        DrawMap.setDisplayPhotographers(true);
+
         DrawMap.setPolyList(polyList);
         DrawMap.setAllPhotoGeo(allPhotoGeo);
         DrawMap.setAllPhotographerGeo(allPhotographerGeo);

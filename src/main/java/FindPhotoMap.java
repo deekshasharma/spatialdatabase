@@ -53,14 +53,14 @@ import java.util.List;
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        if(point != null)
-        {
-            Double x = point.getX();
-            Double y = point.getY();
-            g.setColor(Color.RED);
-            g.fillOval(x.intValue(), y.intValue(), 5, 5);
-        }
-
+//        if(point != null)
+//        {
+//            Double x = point.getX();
+//            Double y = point.getY();
+//            g.setColor(Color.RED);
+//            g.fillOval(x.intValue(), y.intValue(), 5, 5);
+//        }
+//
         super.paintComponent(g);
 
         int numPoints = points.size();
@@ -69,7 +69,7 @@ import java.util.List;
 
         Point prevPoint = (Point) points.get(0);
 
-        // draw polygon
+//        draw polygon
         Iterator it = points.iterator();
         while (it.hasNext()) {
             Point curPoint = (Point) it.next();
@@ -77,7 +77,7 @@ import java.util.List;
             prevPoint = curPoint;
         }
 
-        // now draw tracking line or complete the polygon
+//        now draw tracking line or complete the polygon
         if (polygonIsNowComplete)
             draw(g, prevPoint, (Point) points.get(0));
         else

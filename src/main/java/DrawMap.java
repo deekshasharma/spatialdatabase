@@ -20,19 +20,10 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     private static List<Polygon> rangePolygon;
     private static Point pointClicked;
     private static Point nearestPhotographer;
-
-
-    private boolean polygonIsNowComplete = false;
-    /**
-     * The 'dummy' point tracking the mouse.
-     */
-    private final Point trackPoint = new Point();
-
-    /**
-     * The list of points making up a polygon.
-     */
-    private static ArrayList points = new ArrayList();
-
+    private static boolean allowToDrawPoint = false;
+    private static boolean displayBuildings = false;
+    private static boolean displayPhotos = false;
+    private static boolean displayPhotographers = false;
 
 
 
@@ -114,10 +105,26 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        drawBuilding(g);
-        drawPhoto(g);
-        drawPhotographer(g);
-        drawPoint(g);
+        if(displayBuildings){
+            drawBuilding(g);
+            displayBuildings = false;
+        }
+        if(displayPhotos){
+            drawPhoto(g);
+            displayPhotos = false;
+        }
+        if(displayPhotographers)
+        {
+            drawPhotographer(g);
+            displayPhotographers = false;
+        }
+        if(allowToDrawPoint)
+        {drawPoint(g); }
+//        allowToDrawPoint = false;}
+
+
+
+
 //        try{
 //            if(rangePolygon.size() > 0)
 //            {
@@ -135,6 +142,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
 
     /* This method sets the polList for all the building coordinates*/
     public static   void setPolyList(List<Polygon> polyList){
+
         DrawMap.polyList = polyList;
     }
 
@@ -156,10 +164,33 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
 
     }
 
+    /*
+
+     */
+    public static void setDisplayBuildings(boolean b)
+    {
+        displayBuildings = b;
+    }
+
+    public static void setDisplayPhotos(boolean b)
+    {
+        displayPhotos = b;
+    }
+
+    public static void setDisplayPhotographers(boolean b)
+    {
+        displayPhotographers = b;
+    }
+
+    public static void setAllowToDrawPoint(boolean b)
+    {
+        allowToDrawPoint = b;
+    }
 
 
     @Override
-    public Dimension getPreferredSize() {
+    public Dimension getPreferredSize()
+    {
         return new Dimension(820, 580);
     }
 
@@ -182,8 +213,10 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     public void mousePressed(MouseEvent e) {
         int x = e.getX();
         int y = e.getY();
+//        allowToDrawPoint = true;
         pointClicked = new Point(x, y);
-        repaint();
+        if(allowToDrawPoint)
+        {repaint();}
 
 //        nearestPhotographer = FrontEnd.getNearestPhotographer(pointClicked);
 //        repaint();
@@ -286,17 +319,17 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
 
     private void drawPoint(Graphics g)
     {
-           try{
+//           try{
                if (pointClicked != null) {
                     Double x = pointClicked.getX();
                     Double y = pointClicked.getY();
                     g.setColor(Color.RED);
                     g.fillOval(x.intValue(), y.intValue(), 10, 10);
                 }
-           }catch (NullPointerException e)
-           {
-               System.out.println("No point drawn");
-           }
+//           }catch (NullPointerException e)
+//           {
+//               System.out.println("No point drawn");
+//           }
     }
 
 
