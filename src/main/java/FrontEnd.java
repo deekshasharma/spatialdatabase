@@ -124,6 +124,7 @@ public class FrontEnd extends JLabel {
             DrawMap.setDisplayBuildings(false);
             DrawMap.setDisplayPhotos(false);
             DrawMap.setDisplayPhotographers(false);
+            DrawMap.setAllowToDrawPoint(false);
             map.repaint();
         }
     }
@@ -148,12 +149,6 @@ public class FrontEnd extends JLabel {
     class pointRadioAction implements ActionListener{
        public void  actionPerformed(ActionEvent e)
        {
-//           List<Polygon> polygonList = new ArrayList<Polygon>();
-//           List<ArrayList<Integer>> photo = new ArrayList<ArrayList<Integer>>();
-//           List<ArrayList<Integer>> photographer = new ArrayList<ArrayList<Integer>>();
-//           DrawMap.setPolyList(polygonList);
-//           DrawMap.setAllPhotoGeo(photo);
-//           DrawMap.setAllPhotographerGeo(photographer);
            DrawMap.setAllowToDrawPoint(true);
 //           map.repaint();
        }

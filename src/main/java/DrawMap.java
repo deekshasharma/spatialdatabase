@@ -24,6 +24,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     private static boolean displayBuildings = false;
     private static boolean displayPhotos = false;
     private static boolean displayPhotographers = false;
+    private static boolean displayCircleAroundPoint = false;
 
 
 
@@ -120,7 +121,11 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         }
         if(allowToDrawPoint)
         {drawPoint(g); }
-//        allowToDrawPoint = false;}
+        if(displayCircleAroundPoint)
+        {
+            drawCircleAroundPoint(g);
+            displayCircleAroundPoint = false;
+        }
 
 
 
@@ -213,7 +218,6 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     public void mousePressed(MouseEvent e) {
         int x = e.getX();
         int y = e.getY();
-//        allowToDrawPoint = true;
         pointClicked = new Point(x, y);
         if(allowToDrawPoint)
         {repaint();}
@@ -319,17 +323,22 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
 
     private void drawPoint(Graphics g)
     {
-//           try{
                if (pointClicked != null) {
                     Double x = pointClicked.getX();
                     Double y = pointClicked.getY();
                     g.setColor(Color.RED);
                     g.fillOval(x.intValue(), y.intValue(), 10, 10);
                 }
-//           }catch (NullPointerException e)
-//           {
-//               System.out.println("No point drawn");
-//           }
+                displayCircleAroundPoint = true;
+                repaint();
+    }
+
+    private void drawCircleAroundPoint(Graphics g)
+    {
+        Double x = pointClicked.getX();
+        Double y = pointClicked.getY();
+        g.setColor(Color.RED);
+        g.drawOval(x.intValue() - 100,y.intValue() - 100,2*100,2*100);
     }
 
 
