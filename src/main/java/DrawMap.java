@@ -23,7 +23,10 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     private static boolean displayPhotographers = false;
     private static boolean displayCircleAroundPoint = false;
     private static StringBuilder circleCoordinates;
-    private static boolean greenFlag = true;
+    private static boolean greenFlag = false;
+    private static Polygon polygonNearCentre;
+    private static List<Integer> photoNearCentre;
+    private static List<Integer> photographerNearCentre;
 
 
 
@@ -65,13 +68,13 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         if (displayCircleAroundPoint) {
             drawCircleAroundPoint(g);
             System.out.println("drawing circle");
-
             displayCircleAroundPoint = false;
         }
+        drawPhotographerNearCentre(g);
 
     }
 
-
+   /* Setter Methods
 
     /* This method sets the polyList for all the building coordinates*/
     public static   void setPolyList(List<Polygon> polyList){
@@ -132,7 +135,43 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         allowToDrawPoint = b;
     }
 
+    /*
+        Sets the Polygon near centre for Point query #3
+     */
+    public static void setPolygonNearCentre(Polygon polygonNearCentre)
+    {
+        DrawMap.polygonNearCentre = polygonNearCentre;
+    }
 
+    /*
+    Sets the Photo near centre for Point query #3
+     */
+    public static void setPhotoNearCentre(List<Integer> photoNearCentre)
+    {
+        DrawMap.photoNearCentre = photoNearCentre;
+    }
+
+    /*
+    Sets the photographer near centre for Point query #4
+     */
+    public static void setPhotographerNearCentre(List<Integer> photographerNearCentre)
+    {
+        DrawMap.photographerNearCentre = photographerNearCentre;
+    }
+
+
+    /*
+    Sets the green flag
+     */
+    public static void setGreenFlag(Boolean b)
+    {
+        DrawMap.greenFlag = b;
+    }
+
+
+    /* Getter Methods
+
+     */
     /*
     Returns the circleCoordinates list
      */
@@ -208,6 +247,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
 
     }
 
+    /* Draw Methods
 
     /*
    This methods draws the buildings
@@ -230,6 +270,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         {
             System.out.println("polyList is empty");
         }
+        greenFlag = false;
 
     }
 
@@ -255,6 +296,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         {
             System.out.println("allPhotoGeoList is empty");
         }
+        greenFlag = false;
     }
 
 
@@ -317,8 +359,11 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
      */
     private void drawBuildingNearCenter(Graphics g)
     {
-        g.setColor(Color.YELLOW.darker());
-        g.drawPolygon();
+        if(polygonNearCentre != null)
+        {
+            g.setColor(Color.YELLOW.darker());
+            g.drawPolygon(polygonNearCentre);
+        }
     }
 
     /*
@@ -326,8 +371,23 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
      */
     private void drawPhotoNearCenter(Graphics g)
     {
-        g.setColor(Color.YELLOW.darker());
-        g.drawOval();
+        if(photoNearCentre != null)
+        {
+            g.setColor(Color.YELLOW.darker());
+            g.drawOval(photoNearCentre.get(0), photoNearCentre.get(1), 6, 6);
+        }
+    }
+
+    /*
+    Draw photographer nearest to centre of circle Point query#3
+     */
+    private void drawPhotographerNearCentre(Graphics g)
+    {
+        if(photographerNearCentre != null)
+        {
+            g.setColor(Color.RED.darker());
+            g.drawRect(photographerNearCentre.get(0), photographerNearCentre.get(1), 5, 5);
+        }
     }
 
     /*

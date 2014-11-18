@@ -28,6 +28,7 @@ public class FrontEnd extends JLabel {
     private JPanel panel1;
 
     private String path = "/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG";
+    QueryDatabase queryDatabase = new QueryDatabase();
 
 
     public FrontEnd()
@@ -254,7 +255,6 @@ public class FrontEnd extends JLabel {
     */
     private void wholeSelected(List<FeatureType> featureTypes)
     {
-        QueryDatabase queryDatabase = new QueryDatabase();
         if(featureTypes.contains(FeatureType.BUILDING))
         {
             List<Polygon> polyList = queryDatabase.getWholePolygons(featureTypes);
@@ -290,7 +290,6 @@ public class FrontEnd extends JLabel {
         List<Polygon> rangePolygonList = new ArrayList<Polygon>();
         rangePolygonList.add(rangePolygon);
 
-        QueryDatabase queryDatabase = new QueryDatabase();
         final List<Polygon> polyList = queryDatabase.getRangePolygons(featureTypes,polygonPoints);
         List<ArrayList<Integer>> photo = queryDatabase.getRangePhotoPoints(featureTypes,polygonPoints);
         List<ArrayList<Integer>> photographer = queryDatabase.getRangePhotographerPoints(featureTypes,polygonPoints);
@@ -312,13 +311,13 @@ public class FrontEnd extends JLabel {
     {
         String circleCoordinates = DrawMap.getCircleCoordinates();
         Helper helper = new Helper();
-        String centerCoordinates = helper.toStringPoint(DrawMap.getPointClicked());
-        QueryDatabase queryDatabase = new QueryDatabase();
+        String centreCoordinates = helper.toStringPoint(DrawMap.getPointClicked());
+        DrawMap.setGreenFlag(true);
         if(featureTypes.contains(FeatureType.BUILDING))
         {
              List<Polygon> polygonList = queryDatabase.getBuildingsWithinCircle(circleCoordinates);
              DrawMap.setPolyList(polygonList);
-            DrawMap.setDisplayBuildings(true);
+             DrawMap.setDisplayBuildings(true);
         }
         if(featureTypes.contains(FeatureType.PHOTO))
         {
@@ -329,6 +328,12 @@ public class FrontEnd extends JLabel {
         if(featureTypes.contains(FeatureType.PHOTOGRAPHER))
         {
             List<ArrayList<Integer>> photographerPoints = queryDatabase.getPhotographerWithinCircle(circleCoordinates);
+            List<Integer> photographerNearCentre = queryDatabase.getPhotographerNearCentre(circleCoordinates,centreCoordinates);
+            System.out.println("Centre coordinates are: "+ centreCoordinates);
+            System.out.println("Photographer near centre is "+ photographerNearCentre);
+            System.out.println("All photographers within circle "+ photographerPoints);
+
+            DrawMap.setPhotographerNearCentre(photographerNearCentre);
             DrawMap.setAllPhotographerGeo(photographerPoints);
             DrawMap.setDisplayPhotographers(true);
         }
