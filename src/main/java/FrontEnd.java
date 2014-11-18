@@ -1,7 +1,6 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
@@ -107,6 +106,7 @@ public class FrontEnd extends JLabel {
 
 
         group.add(findPhotographer);
+        findPhotographer.addActionListener(new photographerRadioAction());
 
         panel1.add(query);
         panel1.add(whole);
@@ -125,7 +125,7 @@ public class FrontEnd extends JLabel {
             DrawMap.setDisplayBuildings(false);
             DrawMap.setDisplayPhotos(false);
             DrawMap.setDisplayPhotographers(false);
-            DrawMap.setAllowToDrawPoint(false);
+            DrawMap.setDrawPoint(false);
             map.repaint();
         }
     }
@@ -150,12 +150,11 @@ public class FrontEnd extends JLabel {
     class pointRadioAction implements ActionListener{
        public void  actionPerformed(ActionEvent e)
        {
-           DrawMap.setAllowToDrawPoint(true);
+           DrawMap.setDrawPoint(true);
+           DrawMap.displayCircleAroundPoint = true;
 //           map.repaint();
        }
    }
-
-
 
     /*
       Handles the action of Find Photos radio button
@@ -168,6 +167,26 @@ public class FrontEnd extends JLabel {
             featureTypes.add(FeatureType.PHOTO);
             featureTypes.add(FeatureType.PHOTOGRAPHER);
             wholeSelected(featureTypes);
+        }
+    }
+
+    /*
+    Handles the action of Find Photographer radio buttion
+     */
+
+    class photographerRadioAction implements ActionListener{
+
+        public void actionPerformed(ActionEvent e)
+        {
+            List<FeatureType> featureTypes = new ArrayList<FeatureType>();
+            featureTypes.add(FeatureType.BUILDING);
+            featureTypes.add(FeatureType.PHOTO);
+            featureTypes.add(FeatureType.PHOTOGRAPHER);
+            wholeSelected(featureTypes);
+            DrawMap.setDrawPoint(true);
+            DrawMap.displayCircleAroundPoint = false;
+            DrawMap.isFindPhotographer = true; // remember to turn off after submit event
+
         }
     }
 

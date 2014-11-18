@@ -1,5 +1,3 @@
-import com.sun.corba.se.impl.orbutil.graph.Graph;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -17,17 +15,17 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     private static List<Polygon> rangePolygon;
     private static Point pointClicked;
     private static Point nearestPhotographer;
-    private static boolean allowToDrawPoint = false;
+    private static boolean drawPoint = false;
     private static boolean displayBuildings = false;
     private static boolean displayPhotos = false;
     private static boolean displayPhotographers = false;
-    private static boolean displayCircleAroundPoint = false;
-    private static StringBuilder circleCoordinates;
     private static boolean greenFlag = false;
+    public static boolean displayCircleAroundPoint = false;
+    public static boolean isFindPhotographer = false;
+    private static StringBuilder circleCoordinates;
     private static Polygon polygonNearCentre;
     private static List<Integer> photoNearCentre;
     private static List<Integer> photographerNearCentre;
-
 
 
     public DrawMap(ImageIcon imageIcon)
@@ -59,18 +57,18 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
 
             displayPhotographers = false;
         }
-        if (allowToDrawPoint) {
+        if (drawPoint) {
             drawPoint(g);
             System.out.println("drawing point");
 
-//            allowToDrawPoint = false;
+//            drawPoint = false;
         }
         if (displayCircleAroundPoint) {
             drawCircleAroundPoint(g);
             System.out.println("drawing circle");
-            displayCircleAroundPoint = false;
+//            displayCircleAroundPoint = false;
         }
-        drawPhotographerNearCentre(g);
+//        drawPhotographerNearCentre(g);
 
     }
 
@@ -130,9 +128,9 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
        Sets the boolean flag to display point
      */
 
-    public static void setAllowToDrawPoint(boolean b)
+    public static void setDrawPoint(boolean b)
     {
-        allowToDrawPoint = b;
+        drawPoint = b;
     }
 
     /*
@@ -215,12 +213,35 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         int x = e.getX();
         int y = e.getY();
         pointClicked = new Point(x, y);
-        if(allowToDrawPoint)
+        if(drawPoint)
         {repaint();}
 
 //        nearestPhotographer = FrontEnd.getNearestPhotographer(pointClicked);
 //        repaint();
     }
+
+
+    /*
+    This method draw the point on the map for Point Query#3
+     */
+
+    private void drawPoint(Graphics g)
+    {
+        if (pointClicked != null) {
+            Double x = pointClicked.getX();
+            Double y = pointClicked.getY();
+            g.setColor(Color.RED);
+            g.fillOval(x.intValue(), y.intValue(), 10, 10);
+        }
+        if(isFindPhotographer)
+        {
+            displayBuildings = true;
+            displayPhotos = true;
+            displayPhotographers = true;
+        }
+//                displayCircleAroundPoint = true;
+    }
+
 
     @Override
     public void mouseReleased(MouseEvent e) {
@@ -319,20 +340,6 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         }
     }
 
-    /*
-    This method draw the point on the map for Point Query#3
-     */
-
-    private void drawPoint(Graphics g)
-    {
-               if (pointClicked != null) {
-                    Double x = pointClicked.getX();
-                    Double y = pointClicked.getY();
-                    g.setColor(Color.RED);
-                    g.fillOval(x.intValue(), y.intValue(), 10, 10);
-                }
-                displayCircleAroundPoint = true;
-    }
 
     /*
     This method draw circle around the point chosen by user for Point Query#3
