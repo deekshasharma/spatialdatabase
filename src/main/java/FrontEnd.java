@@ -1,7 +1,6 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
@@ -392,7 +391,7 @@ public class FrontEnd extends JLabel {
     }
 
     /*
-    This is called when Find Photographer query is selected and submitted
+    This is called when Find Photographer query is selected and submitted query#5
      */
     private void photographerSelected()
     {
@@ -400,8 +399,8 @@ public class FrontEnd extends JLabel {
         int[] y = DrawMap.getYRedBuilding();
         Helper helper = new Helper();
         String xyRedBuilding = helper.constructPolygon(x,y);
-        List<ArrayList<Integer>> photographers = queryDatabase.getClosePhotographers(xyRedBuilding);
-        DrawMap.photosNearRedBuilding = photographers;
+        List<ArrayList<Integer>> redPhotos = queryDatabase.getRedPhotos(xyRedBuilding);
+        DrawMap.redPhotos = redPhotos;
         map.repaint();
 
 

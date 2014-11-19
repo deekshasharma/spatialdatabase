@@ -3,7 +3,6 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.List;
 
@@ -29,7 +28,8 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     public static boolean displayCircleAroundPoint = false;
     public static boolean isFindPhotographer = false;
     public static Polygon redBuilding;
-    public static List<ArrayList<Integer>> photosNearRedBuilding;
+    public static List<ArrayList<Integer>> redPhotos;
+    public static List<ArrayList<Integer>> redPhotographers;
 
 
 
@@ -81,7 +81,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
             drawRedBuilding(g);
             drawRedBuildingFlag = false;
         }
-        drawPhotoNearRedBuilding(g);
+        drawRedPhotos(g);
 
     }
 
@@ -464,23 +464,43 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     /*
     This method draws the photos near red building in query#5
      */
-    private void drawPhotoNearRedBuilding(Graphics g)
+    private void drawRedPhotos(Graphics g)
     {
         try
         {
-            if(photosNearRedBuilding.size() > 0)
+            if(redPhotos.size() > 0)
             {
-                for(int i = 0; i < photosNearRedBuilding.size(); i++)
+                for(int i = 0; i < redPhotos.size(); i++)
                 {
                     g.setColor(Color.RED.darker());
-                    g.drawOval(photosNearRedBuilding.get(i).get(0), photosNearRedBuilding.get(i).get(1), 6, 6);
+                    g.drawOval(redPhotos.get(i).get(0), redPhotos.get(i).get(1), 6, 6);
                 }
             }
         }catch (NullPointerException e)
         {
-            System.out.println("photosNearRedBuilding is empty");
+            System.out.println("redPhotos is empty");
         }
     }
+
+    /*
+    This method draws photographer near red building in query#5
+
+    private void drawPhotographersNearRedBuilding(Graphics g)
+    {
+        try{
+            if(redPhotographers.size() > 0)
+            {
+                for(int i = 0; i < redPhotographers.size(); i++)
+                {
+                    g.setColor(Color.RED.darker());
+                    g.drawRect(redPhotographers.get(i).get(0),redPhotographers.get(i).get(1),5,5);
+                }
+            }
+        }catch (NullPointerException e){
+            System.out.println("redPhotographers list is empty");
+        }
+    }
+    */
 
 
 

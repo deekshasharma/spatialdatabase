@@ -376,12 +376,18 @@ public class QueryDatabase {
     /*
     Returns the photographers near Red Building query#5
      */
-    protected List<ArrayList<Integer>> getClosePhotographers(String xyRedBuilding)
+    protected List<ArrayList<Integer>> getRedPhotos(String xyRedBuilding)
     {
         String query = "SELECT P.PHOTOCOORDINATES from photo P WHERE MDSYS.SDO_WITHIN_DISTANCE(P.PHOTOCOORDINATES," +
                 "MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,1)," +
                 "MDSYS.SDO_ORDINATE_ARRAY("+xyRedBuilding+")),'distance = 80') = 'TRUE'";
 
+        return (queryPhotoTable(query));
+    }
+
+    protected List<ArrayList<Integer>> getRedPhotographers(String xyRedBuilding)
+    {
+        String query = "";
         return (queryPhotographerTable(query));
     }
 
