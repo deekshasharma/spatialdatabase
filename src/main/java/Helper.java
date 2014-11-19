@@ -10,13 +10,22 @@ public class Helper {
 //        polyPoints.add(new Point(4,5));
 //        polyPoints.add(new Point(6,7));
 //        polyPoints.add(new Point(9,8));
-//
-        Helper helper = new Helper();
 //        System.out.println(polyPoints.size());
 //        System.out.println(Arrays.toString(helper.getX(polyPoints)));
 //        System.out.println(Arrays.toString(helper.getY(polyPoints)));
-        Point p = new Point(3,4);
-        System.out.println(helper.toStringPoint(p));
+//        Point p = new Point(3,4);
+//        System.out.println(helper.toStringPoint(p));
+//
+//        Helper helper = new Helper();
+//        int x [] = new int[3];
+//        x[0] = 2;
+//        x[1] = 3;
+//        x[2] = 4;
+//        int y [] = new int[3];
+//        y[0] = 5;
+//        y[1] = 7;
+//        y[2] = 8;
+//        System.out.println(helper.constructPolygon(x,y));
 
     }
 
@@ -82,6 +91,23 @@ public class Helper {
         points.append(x1).append(",").append(y1).append(",").append("null");
 
         return points.toString();
+    }
+
+    protected String constructPolygon(int[] x, int[] y)
+    {
+        StringBuilder polyCoordinates = new StringBuilder();
+        for (int i= 0 ; i < x.length;i++)
+        {
+            if(i < x.length-1)
+            {
+               polyCoordinates.append(x[i]).append(",").append(y[i]).append(",");
+            }
+            else
+            {
+                polyCoordinates.append(x[i]).append(",").append(y[i]);
+            }
+        }
+        return polyCoordinates.toString();
     }
 
 }

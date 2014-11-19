@@ -1,5 +1,7 @@
 import oracle.spatial.geometry.JGeometry;
 import oracle.sql.STRUCT;
+import sun.org.mozilla.javascript.internal.ast.ArrayLiteral;
+
 import java.awt.*;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -368,8 +370,19 @@ public class QueryDatabase {
             int[] yPoly = separatePolyCoordinates(buildingGeo.get(i), 1);
             polygon = new Polygon(xPoly, yPoly, xPoly.length);
         }
-        System.out.println("Red building returned is : "+queryBuildingTable(query));
         return polygon;
+    }
+
+    /*
+    Returns the photographers near Red Building query#5
+     */
+    protected List<ArrayList<Integer>> getClosePhotographers(String xyRedBuilding)
+    {
+        String query = "SELECT P.PHOTOCOORDINATES from photo P WHERE MDSYS.SDO_WITHIN_DISTANCE(P.PHOTOCOORDINATES," +
+                "MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,1)," +
+                "MDSYS.SDO_ORDINATE_ARRAY("+xyRedBuilding+")),'distance = 80') = 'TRUE'";
+
+        return (queryPhotographerTable(query));
     }
 
 

@@ -250,7 +250,7 @@ public class FrontEnd extends JLabel {
                       featureTypes = getActiveFeatureType();
                       pointSelected(featureTypes);
                   }
-                  if(photographer.isSelected())
+                  if(findPhotographer.isSelected())
                   {
                       photographerSelected();
                   }
@@ -391,9 +391,21 @@ public class FrontEnd extends JLabel {
         return (queryDatabase.getRedBuildingCoordinates(point));
     }
 
+    /*
+    This is called when Find Photographer query is selected and submitted
+     */
     private void photographerSelected()
     {
-//        List<ArrayList<Integer>> photographers = queryDatabase.getClosePhotographers()
+        int[] x = DrawMap.getXRedBuilding();
+        int[] y = DrawMap.getYRedBuilding();
+        Helper helper = new Helper();
+        String xyRedBuilding = helper.constructPolygon(x,y);
+        List<ArrayList<Integer>> photographers = queryDatabase.getClosePhotographers(xyRedBuilding);
+        DrawMap.photosNearRedBuilding = photographers;
+        map.repaint();
+
+
+
     }
 
 

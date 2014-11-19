@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.List;
 
@@ -28,6 +29,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     public static boolean displayCircleAroundPoint = false;
     public static boolean isFindPhotographer = false;
     public static Polygon redBuilding;
+    public static List<ArrayList<Integer>> photosNearRedBuilding;
 
 
 
@@ -79,6 +81,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
             drawRedBuilding(g);
             drawRedBuildingFlag = false;
         }
+        drawPhotoNearRedBuilding(g);
 
     }
 
@@ -176,6 +179,14 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         DrawMap.greenFlag = b;
     }
 
+    /*
+   This method sets the red polygon for the range query
+    */
+    public static  void setRangePolygon(List<Polygon> rangePolygon)
+    {
+        DrawMap.rangePolygon = rangePolygon;
+    }
+
 
     /* Getter Methods
 
@@ -197,6 +208,22 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         return pointClicked;
     }
 
+    /*
+    Returns x coordinates for red building query#5
+     */
+    public static int[] getXRedBuilding()
+    {
+        return redBuilding.xpoints;
+    }
+
+    /*
+    Returns y coordinates for red building query#5
+     */
+    public static int[] getYRedBuilding()
+    {
+        return redBuilding.ypoints;
+    }
+
     @Override
     public Dimension getPreferredSize()
     {
@@ -204,13 +231,6 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     }
 
 
-    /*
-    This method sets the red polygon for the range query
-     */
-    public static  void setRangePolygon(List<Polygon> rangePolygon)
-    {
-        DrawMap.rangePolygon = rangePolygon;
-    }
 
     @Override
     public void mouseClicked(MouseEvent e)
@@ -438,6 +458,27 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         } catch (NullPointerException e)
         {
             System.out.println("NearestPhotographer is null");
+        }
+    }
+
+    /*
+    This method draws the photos near red building in query#5
+     */
+    private void drawPhotoNearRedBuilding(Graphics g)
+    {
+        try
+        {
+            if(photosNearRedBuilding.size() > 0)
+            {
+                for(int i = 0; i < photosNearRedBuilding.size(); i++)
+                {
+                    g.setColor(Color.RED.darker());
+                    g.drawOval(photosNearRedBuilding.get(i).get(0), photosNearRedBuilding.get(i).get(1), 6, 6);
+                }
+            }
+        }catch (NullPointerException e)
+        {
+            System.out.println("photosNearRedBuilding is empty");
         }
     }
 
