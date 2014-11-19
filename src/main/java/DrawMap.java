@@ -14,8 +14,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     private static List<ArrayList<Integer>> allPhotographerGeo;
     private static List<Polygon> rangePolygon;
     private static Point pointClicked;
-    private static Point nearestPhotographer;
-    private static boolean drawPoint = false;
+    private static boolean drawPointOn = false;
     private static boolean displayBuildings = false;
     private static boolean displayPhotos = false;
     private static boolean displayPhotographers = false;
@@ -31,6 +30,25 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     public static Polygon redBuilding;
     public static List<ArrayList<Integer>> redPhotos;
     public static List<ArrayList<Integer>> redPhotographers;
+    public static Point photographerNearPoint;
+    public static List<ArrayList<Integer>> photoByPhotographerInPolygon;
+    private static boolean startDrawPolygon = false;
+
+    //////
+    private boolean polygonIsNowComplete = false;
+
+    /**
+     * The 'dummy' point tracking the mouse.
+     */
+    private final Point trackPoint = new Point();
+
+    /**
+     * The list of polygonPointsList making up a polygon.
+     */
+    private static ArrayList polygonPointsList = new ArrayList();
+
+
+    ///////
 
 
 
@@ -63,11 +81,11 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
 
             displayPhotographers = false;
         }
-        if (drawPoint) {
+        if (drawPointOn) {
             drawPoint(g);
             System.out.println("drawing point");
 
-//            drawPoint = false;
+//            drawPointOn = false;
         }
         if (displayCircleAroundPoint) {
             drawCircleAroundPoint(g);
@@ -86,11 +104,97 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         drawPhotographersNearRedBuilding(g);
         drawPhotographerNearPoint(g);
 
+        //////////////////////////////////Polygon code starting
+        if(startDrawPolygon)
+        {
+            int numPoints = polygonPointsList.size();
+            if (numPoints == 0)
+                return; // nothing to draw
+
+            Point prevPoint = (Point) polygonPointsList.get(0);
+
+            // draw polygon
+            Iterator it = polygonPointsList.iterator();
+            while (it.hasNext()) {
+                Point curPoint = (Point) it.next();
+                draw(g, prevPoint, curPoint);
+                prevPoint = curPoint;
+            }
+
+            // now draw tracking line or complete the polygon
+            if (polygonIsNowComplete)
+                draw(g, prevPoint, (Point) polygonPointsList.get(0));
+            else
+                draw(g, prevPoint, trackPoint);
+        }
+        startDrawPolygon = false;
+
     }
 
-   /* Setter Methods
 
-    /* This method sets the polyList for all the building coordinates*/
+
+    @Override
+    public void mouseClicked(MouseEvent e)
+    {
+        int x = e.getX();
+        int y = e.getY();
+
+        switch (e.getClickCount()) {
+            case 1: // single-click
+                if (polygonIsNowComplete) {
+                    polygonPointsList.clear();
+                    polygonIsNowComplete = false;
+                }
+                polygonPointsList.add(new Point(x, y));
+                repaint();
+                break;
+
+            case 2: // double-click
+                polygonIsNowComplete = true;
+                polygonPointsList.add(new Point(x, y));
+                repaint();
+                break;
+
+            default: // ignore anything else
+                break;
+        }
+    }
+
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        trackPoint.x = e.getX();
+        trackPoint.y = e.getY();
+        repaint();
+
+    }
+
+
+    private void draw(Graphics g, Point p1, Point p2) {
+        int x1 = p1.x;
+        int y1 = p1.y;
+
+        int x2 = p2.x;
+        int y2 = p2.y;
+
+        // draw the line first so that the polygonPointsList
+        // appear on top of the line ends, not below
+        g.setColor(Color.RED);
+        g.drawLine(x1 + 3, y1 + 3, x2 + 3, y2 + 3);
+
+        g.setColor(Color.RED);
+        g.fillOval(x1, y1, 8, 8);
+
+        g.setColor(Color.RED);
+        g.fillOval(x2, y2, 8, 8);
+    }
+
+
+    /////////////////////////////////////
+
+    /* Setter Methods
+
+    /* This method sets the List<Polygon> for all the building coordinates*/
     public static   void setPolyList(List<Polygon> polyList){
 
         DrawMap.polyList = polyList;
@@ -144,9 +248,9 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
        Sets the boolean flag to display point
      */
 
-    public static void setDrawPoint(boolean b)
+    public static void setDrawPointOn(boolean b)
     {
-        drawPoint = b;
+        drawPointOn = b;
     }
 
     /*
@@ -233,24 +337,23 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         return new Dimension(820, 580);
     }
 
-
-
-    @Override
-    public void mouseClicked(MouseEvent e)
+    /*
+    Returns the list of polygon points
+     */
+    public static List<Point> getPolygonPoints()
     {
-
+        return polygonPointsList;
     }
+
+
 
     @Override
     public void mousePressed(MouseEvent e) {
         int x = e.getX();
         int y = e.getY();
         pointClicked = new Point(x, y);
-        if(drawPoint)
+        if(drawPointOn)
         {repaint();}
-
-//        nearestPhotographer = FrontEnd.getPhotographerNearPoint(pointClicked);
-//        repaint();
     }
 
 
@@ -284,8 +387,9 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
             displayPhotographers = true;
             if(pointClicked != null)
             {
-                nearestPhotographer = FrontEnd.getPhotographerNearPoint(pointClicked);
+                photographerNearPoint = FrontEnd.getPhotographerNearPoint(pointClicked);
             }
+            startDrawPolygon = true;
         }
 //                displayCircleAroundPoint = true;
     }
@@ -306,10 +410,10 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     private void drawPhotographerNearPoint(Graphics graphics)
     {
         try{
-            if(nearestPhotographer != null)
+            if(photographerNearPoint != null)
             {
-                Double x = nearestPhotographer.getX();
-                Double y = nearestPhotographer.getY();
+                Double x = photographerNearPoint.getX();
+                Double y = photographerNearPoint.getY();
                 graphics.drawOval(x.intValue(), y.intValue(),5,5);
                 graphics.setColor(Color.RED.darker().brighter().darker());
             }
@@ -340,10 +444,6 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
 
     }
 
-    @Override
-    public void mouseMoved(MouseEvent e) {
-
-    }
 
     /* Draw Methods
 
@@ -474,24 +574,6 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         }
     }
 
-    /*
-    This method draws nearest photographer to the point for Find photos query#4
-
-    private void drawPhotographerNearPoint(Graphics graphics)
-    {
-        try{
-            if(nearestPhotographer != null)
-            {
-                Double x = nearestPhotographer.getX();
-                Double y = nearestPhotographer.getY();
-                graphics.drawOval(x.intValue(), y.intValue(),5,5);
-                graphics.setColor(Color.RED.darker().brighter().darker());
-            }
-        } catch (NullPointerException e)
-        {
-            System.out.println("NearestPhotographer is null");
-        }
-    }
 
     /*
     This method draws the photos near red building in query#5

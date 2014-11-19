@@ -353,6 +353,22 @@ public class QueryDatabase {
 
 
     /*
+    Returns the photos inside polygon taken by the selected photographer query#4
+     */
+    protected List<ArrayList<Integer>> getPhotosInPolygonForPhotographer(String polygonPoints, String photographerLocation)
+    {
+        String query = "SELECT P.PHOTOCOORDINATES from photo P WHERE MDSYS.SDO_INSIDE(P.PHOTOCOORDINATES," +
+                "MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,1)," +
+                "MDSYS.SDO_ORDINATE_ARRAY("+polygonPoints+"))) = 'TRUE' AND " +
+                "P.PHOTOGRAPHERID = (select Ph.PHOTOGRAPHERID from Photographer Ph where MDSYS.SDO_EQUAL(Ph.PHOTOGRAPHERLOC,\n" +
+                "mdsys.sdo_geometry(2001, null,mdsys.sdo_point_type("+photographerLocation+"),NULL, NULL)) = 'TRUE')";
+
+        return (queryPhotoTable(query));
+
+    }
+
+
+    /*
     Returns the coordinates of the RedBuilding query#5
      */
 

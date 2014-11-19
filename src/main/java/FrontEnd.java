@@ -125,7 +125,7 @@ public class FrontEnd extends JLabel {
             DrawMap.setDisplayBuildings(false);
             DrawMap.setDisplayPhotos(false);
             DrawMap.setDisplayPhotographers(false);
-            DrawMap.setDrawPoint(false);
+            DrawMap.setDrawPointOn(false);
             map.repaint();
         }
     }
@@ -150,7 +150,7 @@ public class FrontEnd extends JLabel {
     class pointRadioAction implements ActionListener{
        public void  actionPerformed(ActionEvent e)
        {
-           DrawMap.setDrawPoint(true);
+           DrawMap.setDrawPointOn(true);
            DrawMap.displayCircleAroundPoint = true;
 //           map.repaint();
        }
@@ -167,7 +167,7 @@ public class FrontEnd extends JLabel {
             featureTypes.add(FeatureType.PHOTO);
             featureTypes.add(FeatureType.PHOTOGRAPHER);
             wholeSelected(featureTypes);
-            DrawMap.setDrawPoint(true);
+            DrawMap.setDrawPointOn(true);
             DrawMap.isFindPhotoOn = true;
         }
     }
@@ -186,7 +186,7 @@ public class FrontEnd extends JLabel {
             featureTypes.add(FeatureType.PHOTOGRAPHER);
             wholeSelected(featureTypes);
 
-            DrawMap.setDrawPoint(true);
+            DrawMap.setDrawPointOn(true);
             DrawMap.displayCircleAroundPoint = false;
             DrawMap.isFindPhotographerOn = true; // remember to turn off after submit event
 
@@ -251,9 +251,13 @@ public class FrontEnd extends JLabel {
                       featureTypes = getActiveFeatureType();
                       pointSelected(featureTypes);
                   }
+                  if(findPhoto.isSelected())
+                  {
+                      findPhotoSelected();
+                  }
                   if(findPhotographer.isSelected())
                   {
-                      photographerSelected();
+                      findPhotographerSelected();
                   }
               }
     }
@@ -303,7 +307,7 @@ public class FrontEnd extends JLabel {
     }
 
      /*
-   This method is called when range query is selected and submitted.
+   This method is called when range query#2 is selected and submitted.
     */
 
     private void rangeSelected(List<FeatureType> featureTypes)
@@ -331,7 +335,7 @@ public class FrontEnd extends JLabel {
 
 
     /*
-    This is called when point query is selected and submitted.
+    This is called when point query#3 is selected and submitted.
      */
     private void pointSelected(List<FeatureType> featureTypes)
     {
@@ -355,9 +359,6 @@ public class FrontEnd extends JLabel {
         {
             List<ArrayList<Integer>> photographerPoints = queryDatabase.getPhotographerWithinCircle(circleCoordinates);
             List<Integer> photographerNearCentre = queryDatabase.getPhotographerNearCentre(circleCoordinates,centreCoordinates);
-            System.out.println("Centre coordinates are: "+ centreCoordinates);
-            System.out.println("Photographer near centre is "+ photographerNearCentre);
-            System.out.println("All photographers within circle "+ photographerPoints);
 
             DrawMap.setPhotographerNearCentre(photographerNearCentre);
             DrawMap.setAllPhotographerGeo(photographerPoints);
@@ -369,7 +370,7 @@ public class FrontEnd extends JLabel {
 
 
     /*
-
+       Returns the location of photographer nearest to the selected point query#4
      */
     public static Point getPhotographerNearPoint(Point p)
     {
@@ -378,7 +379,19 @@ public class FrontEnd extends JLabel {
         QueryDatabase queryDatabase = new QueryDatabase();
         Point nearestPhotographer = queryDatabase.getPhotographerNearPoint(pointCoordinates);
         return nearestPhotographer;
+    }
 
+    /*
+        This is called when Find Photos query#4 is selected and submitted
+     */
+    private void findPhotoSelected()
+    {
+        Helper helper = new Helper();
+        String photographerLocation = helper.toStringPoint(DrawMap.photographerNearPoint);
+        String polygonCoordinates = helper.toStringPolygon(DrawMap.getPolygonPoints());
+        List<ArrayList<Integer>> photos = queryDatabase.getPhotosInPolygonForPhotographer(polygonCoordinates,photographerLocation);
+        DrawMap.photoByPhotographerInPolygon = photos;
+        map.repaint();
     }
 
 
@@ -395,7 +408,7 @@ public class FrontEnd extends JLabel {
     /*
     This is called when Find Photographer query is selected and submitted query#5
      */
-    private void photographerSelected()
+    private void findPhotographerSelected()
     {
         int[] x = DrawMap.getXRedBuilding();
         int[] y = DrawMap.getYRedBuilding();

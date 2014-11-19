@@ -6,27 +6,8 @@ public class Helper {
 
     public static void main(String[] args) {
 //        List<Point> polyPoints = new ArrayList<Point>();
-//        polyPoints.add(new Point(2,3));
-//        polyPoints.add(new Point(4,5));
-//        polyPoints.add(new Point(6,7));
-//        polyPoints.add(new Point(9,8));
-//        System.out.println(polyPoints.size());
-//        System.out.println(Arrays.toString(helper.getX(polyPoints)));
-//        System.out.println(Arrays.toString(helper.getY(polyPoints)));
-//        Point p = new Point(3,4);
 //        System.out.println(helper.toStringPoint(p));
 //
-//        Helper helper = new Helper();
-//        int x [] = new int[3];
-//        x[0] = 2;
-//        x[1] = 3;
-//        x[2] = 4;
-//        int y [] = new int[3];
-//        y[0] = 5;
-//        y[1] = 7;
-//        y[2] = 8;
-//        System.out.println(helper.constructPolygon(x,y));
-
     }
 
     protected String toStringPolygon(java.util.List<Point> polygonPoints)
