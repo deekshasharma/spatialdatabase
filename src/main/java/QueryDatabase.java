@@ -15,9 +15,11 @@ public class QueryDatabase {
 
     public static void main(String[] args) {
         QueryDatabase database = new QueryDatabase();
-        String point = " 220,110,NULL";
-        String s = "323,200,479,417,690,244";
-        database.getPhotographerNearCentre(s,point);
+        String point = " 119,160,NULL";
+        database.getRedBuildingCoordinates(point);
+//        String s = "323,200,479,417,690,244";
+//        database.getPhotographerNearCentre(s,point);
+        //[[380, 66, 493, 126, 475, 157, 363, 97, 380, 66]]
         dbConnection.closeConnection();
 
 //        List<FeatureType> featureTypes = new ArrayList<FeatureType>();
@@ -309,21 +311,13 @@ public class QueryDatabase {
 
 
 
-    /*
-    Returns the location point of the nearest photographer query #4
-     */
-    protected Point getNearestPhotographer(String point)
-    {
-        List<ArrayList<Integer>> photographerLoc = new ArrayList<ArrayList<Integer>>();
-        String query = "(SELECT Ph.PHOTOGRAPHERLOC FROM photographer Ph  WHERE \n" +
-                "SDO_NN(Ph.photographerloc, mdsys.sdo_geometry(2001, null, " +
-                "mdsys.sdo_point_type("+point+"), NULL, NULL), 'sdo_num_res=1') = 'TRUE')";
-        photographerLoc = queryPhotographerTable(query);
-        int x = photographerLoc.get(0).get(0);
-        int y = photographerLoc.get(0).get(1);
-        return (new Point(x,y));
-    }
 
+
+
+
+    /*
+    Returns the coordinates of the Photographer nearest to centre query#3
+     */
     protected List<Integer> getPhotographerNearCentre(String circlePoints, String centre)
     {
         String query = "SELECT Ph.PHOTOGRAPHERLOC FROM photographer Ph  WHERE \n" +
@@ -339,4 +333,44 @@ public class QueryDatabase {
         return photographerNearCentre;
 
     }
+
+    /*
+    Returns the location point of the nearest photographer query #4
+     */
+    protected Point getNearestPhotographer(String point)
+    {
+        List<ArrayList<Integer>> photographerLoc = new ArrayList<ArrayList<Integer>>();
+        String query = "(SELECT Ph.PHOTOGRAPHERLOC FROM photographer Ph  WHERE \n" +
+                "SDO_NN(Ph.photographerloc, mdsys.sdo_geometry(2001, null, " +
+                "mdsys.sdo_point_type("+point+"), NULL, NULL), 'sdo_num_res=1') = 'TRUE')";
+        photographerLoc = queryPhotographerTable(query);
+        int x = photographerLoc.get(0).get(0);
+        int y = photographerLoc.get(0).get(1);
+        return (new Point(x,y));
+    }
+
+
+    /*
+    Returns the coordinates of the RedBuilding query#5
+     */
+
+    protected Polygon getRedBuildingCoordinates(String point)
+    {
+        String query = "select B.GEO from building B where MDSYS.SDO_CONTAINS(B.GEO," +
+                "mdsys.sdo_geometry(2001, null,mdsys.sdo_point_type("+point+"), NULL, NULL)) = 'TRUE'";
+
+        List<ArrayList<Integer>> buildingGeo = queryBuildingTable(query);
+        Polygon polygon = null;
+
+        for (int i = 0; i < buildingGeo.size(); i++)
+        {
+            int[] xPoly = separatePolyCoordinates(buildingGeo.get(i), 0);
+            int[] yPoly = separatePolyCoordinates(buildingGeo.get(i), 1);
+            polygon = new Polygon(xPoly, yPoly, xPoly.length);
+        }
+        System.out.println("Red building returned is : "+queryBuildingTable(query));
+        return polygon;
+    }
+
+
 }

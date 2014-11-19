@@ -20,12 +20,15 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     private static boolean displayPhotos = false;
     private static boolean displayPhotographers = false;
     private static boolean greenFlag = false;
-    public static boolean displayCircleAroundPoint = false;
-    public static boolean isFindPhotographer = false;
+    private static boolean drawRedBuildingFlag = false; // how will you turn this off after find photographer query?
     private static StringBuilder circleCoordinates;
     private static Polygon polygonNearCentre;
     private static List<Integer> photoNearCentre;
     private static List<Integer> photographerNearCentre;
+    public static boolean displayCircleAroundPoint = false;
+    public static boolean isFindPhotographer = false;
+    public static Polygon redBuilding;
+
 
 
     public DrawMap(ImageIcon imageIcon)
@@ -69,6 +72,13 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
 //            displayCircleAroundPoint = false;
         }
 //        drawPhotographerNearCentre(g);
+
+        if(drawRedBuildingFlag)
+        {
+            System.out.printf("drawing red building");
+            drawRedBuilding(g);
+            drawRedBuildingFlag = false;
+        }
 
     }
 
@@ -230,6 +240,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         if (pointClicked != null) {
             Double x = pointClicked.getX();
             Double y = pointClicked.getY();
+            System.out.println(pointClicked);
             g.setColor(Color.RED);
             g.fillOval(x.intValue(), y.intValue(), 10, 10);
         }
@@ -238,8 +249,22 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
             displayBuildings = true;
             displayPhotos = true;
             displayPhotographers = true;
+            if(pointClicked != null)
+            {
+            drawRedBuildingFlag = true;
+            }
         }
 //                displayCircleAroundPoint = true;
+    }
+
+    /*
+    Draw the Red building for Find Photographer query#5
+     */
+    private void drawRedBuilding(Graphics g)
+    {
+        redBuilding = FrontEnd.getBuilding(pointClicked);
+        g.setColor(Color.RED.darker());
+        g.drawPolygon(redBuilding);
     }
 
 

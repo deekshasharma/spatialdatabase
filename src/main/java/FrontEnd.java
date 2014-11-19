@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
@@ -27,7 +28,7 @@ public class FrontEnd extends JLabel {
     private JPanel panel1;
 
     private String path = "/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG";
-    QueryDatabase queryDatabase = new QueryDatabase();
+    private static QueryDatabase queryDatabase = new QueryDatabase();
 
 
     public FrontEnd()
@@ -183,6 +184,7 @@ public class FrontEnd extends JLabel {
             featureTypes.add(FeatureType.PHOTO);
             featureTypes.add(FeatureType.PHOTOGRAPHER);
             wholeSelected(featureTypes);
+
             DrawMap.setDrawPoint(true);
             DrawMap.displayCircleAroundPoint = false;
             DrawMap.isFindPhotographer = true; // remember to turn off after submit event
@@ -247,6 +249,10 @@ public class FrontEnd extends JLabel {
                   {
                       featureTypes = getActiveFeatureType();
                       pointSelected(featureTypes);
+                  }
+                  if(photographer.isSelected())
+                  {
+                      photographerSelected();
                   }
               }
     }
@@ -357,6 +363,7 @@ public class FrontEnd extends JLabel {
             DrawMap.setDisplayPhotographers(true);
         }
         map.repaint();
+        // turn off displayCircleAroundPoint
     }
 
 
@@ -372,6 +379,24 @@ public class FrontEnd extends JLabel {
         return nearestPhotographer;
 
     }
+
+
+    /*
+    Return the polygon for Red Building in Query#5
+     */
+    public static Polygon getBuilding(Point p)
+    {
+        Helper helper = new Helper();
+        String point = helper.toStringPoint(p);
+        return (queryDatabase.getRedBuildingCoordinates(point));
+    }
+
+    private void photographerSelected()
+    {
+//        List<ArrayList<Integer>> photographers = queryDatabase.getClosePhotographers()
+    }
+
+
 
 
 }
