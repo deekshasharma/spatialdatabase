@@ -82,6 +82,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
             drawRedBuildingFlag = false;
         }
         drawRedPhotos(g);
+        drawPhotographersNearRedBuilding(g);
 
     }
 
@@ -484,7 +485,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
 
     /*
     This method draws photographer near red building in query#5
-
+    */
     private void drawPhotographersNearRedBuilding(Graphics g)
     {
         try{
@@ -500,8 +501,4 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
             System.out.println("redPhotographers list is empty");
         }
     }
-    */
-
-
-
 }

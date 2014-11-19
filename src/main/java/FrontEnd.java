@@ -400,7 +400,11 @@ public class FrontEnd extends JLabel {
         Helper helper = new Helper();
         String xyRedBuilding = helper.constructPolygon(x,y);
         List<ArrayList<Integer>> redPhotos = queryDatabase.getRedPhotos(xyRedBuilding);
+        List<ArrayList<Integer>> redPhotographers = queryDatabase.getRedPhotographers(xyRedBuilding);
+        System.out.println("Photographers without intersecting any building are "+redPhotographers);
+
         DrawMap.redPhotos = redPhotos;
+        DrawMap.redPhotographers = redPhotographers;
         map.repaint();
 
 

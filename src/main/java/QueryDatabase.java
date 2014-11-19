@@ -387,7 +387,10 @@ public class QueryDatabase {
 
     protected List<ArrayList<Integer>> getRedPhotographers(String xyRedBuilding)
     {
-        String query = "";
+        String query = "SELECT Ph.PHOTOGRAPHERLOC from photographer Ph WHERE MDSYS.SDO_WITHIN_DISTANCE(Ph.PHOTOGRAPHERLOC," +
+                "MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,1)," +
+                "MDSYS.SDO_ORDINATE_ARRAY("+xyRedBuilding+")),'distance = 40' ) = 'TRUE'";
+
         return (queryPhotographerTable(query));
     }
 
