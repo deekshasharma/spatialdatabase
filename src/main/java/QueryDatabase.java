@@ -374,7 +374,7 @@ public class QueryDatabase {
     }
 
     /*
-    Returns the photographers near Red Building query#5
+    Returns the photos near Red Building query#5
      */
     protected List<ArrayList<Integer>> getRedPhotos(String xyRedBuilding)
     {
@@ -385,6 +385,9 @@ public class QueryDatabase {
         return (queryPhotoTable(query));
     }
 
+    /*
+    Returns photographers near Red Building query#5
+     */
     protected List<ArrayList<Integer>> getRedPhotographers(String xyRedBuilding)
     {
         String query = "SELECT Ph.PHOTOGRAPHERLOC from photographer Ph WHERE MDSYS.SDO_WITHIN_DISTANCE(Ph.PHOTOGRAPHERLOC," +
