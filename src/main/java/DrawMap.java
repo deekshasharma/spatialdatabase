@@ -84,6 +84,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         }
         drawRedPhotos(g);
         drawPhotographersNearRedBuilding(g);
+        drawPhotographerNearPoint(g);
 
     }
 
@@ -248,7 +249,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         if(drawPoint)
         {repaint();}
 
-//        nearestPhotographer = FrontEnd.getNearestPhotographer(pointClicked);
+//        nearestPhotographer = FrontEnd.getPhotographerNearPoint(pointClicked);
 //        repaint();
     }
 
@@ -281,6 +282,10 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
             displayBuildings = true;
             displayPhotos = true;
             displayPhotographers = true;
+            if(pointClicked != null)
+            {
+                nearestPhotographer = FrontEnd.getPhotographerNearPoint(pointClicked);
+            }
         }
 //                displayCircleAroundPoint = true;
     }
@@ -293,6 +298,25 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         redBuilding = FrontEnd.getBuilding(pointClicked);
         g.setColor(Color.RED.darker());
         g.drawPolygon(redBuilding);
+    }
+
+    /*
+   This method draws nearest photographer to the point for Find photos query#4
+    */
+    private void drawPhotographerNearPoint(Graphics graphics)
+    {
+        try{
+            if(nearestPhotographer != null)
+            {
+                Double x = nearestPhotographer.getX();
+                Double y = nearestPhotographer.getY();
+                graphics.drawOval(x.intValue(), y.intValue(),5,5);
+                graphics.setColor(Color.RED.darker().brighter().darker());
+            }
+        } catch (NullPointerException e)
+        {
+            System.out.println("NearestPhotographer is null");
+        }
     }
 
 
@@ -452,8 +476,8 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
 
     /*
     This method draws nearest photographer to the point for Find photos query#4
-     */
-    private void drawNearestPhotographer(Graphics graphics)
+
+    private void drawPhotographerNearPoint(Graphics graphics)
     {
         try{
             if(nearestPhotographer != null)

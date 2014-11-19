@@ -371,12 +371,12 @@ public class FrontEnd extends JLabel {
     /*
 
      */
-    public static Point getNearestPhotographer(Point p)
+    public static Point getPhotographerNearPoint(Point p)
     {
         Helper helper = new Helper();
         String pointCoordinates = helper.toStringPoint(p);
         QueryDatabase queryDatabase = new QueryDatabase();
-        Point nearestPhotographer = queryDatabase.getNearestPhotographer(pointCoordinates);
+        Point nearestPhotographer = queryDatabase.getPhotographerNearPoint(pointCoordinates);
         return nearestPhotographer;
 
     }

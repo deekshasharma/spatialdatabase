@@ -339,7 +339,7 @@ public class QueryDatabase {
     /*
     Returns the location point of the nearest photographer query #4
      */
-    protected Point getNearestPhotographer(String point)
+    protected Point getPhotographerNearPoint(String point)
     {
         List<ArrayList<Integer>> photographerLoc = new ArrayList<ArrayList<Integer>>();
         String query = "(SELECT Ph.PHOTOGRAPHERLOC FROM photographer Ph  WHERE \n" +
