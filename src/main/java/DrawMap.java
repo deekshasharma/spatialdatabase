@@ -26,7 +26,8 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     private static List<Integer> photoNearCentre;
     private static List<Integer> photographerNearCentre;
     public static boolean displayCircleAroundPoint = false;
-    public static boolean isFindPhotographer = false;
+    public static boolean isFindPhotographerOn = false;      // how will you turn this off   ?
+    public static boolean isFindPhotoOn = false;
     public static Polygon redBuilding;
     public static List<ArrayList<Integer>> redPhotos;
     public static List<ArrayList<Integer>> redPhotographers;
@@ -263,9 +264,9 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
             Double y = pointClicked.getY();
             System.out.println(pointClicked);
             g.setColor(Color.RED);
-            g.fillOval(x.intValue(), y.intValue(), 10, 10);
+            g.fillOval(x.intValue(), y.intValue(), 8, 8);
         }
-        if(isFindPhotographer)
+        if(isFindPhotographerOn)
         {
             displayBuildings = true;
             displayPhotos = true;
@@ -274,6 +275,12 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
             {
             drawRedBuildingFlag = true;
             }
+        }
+        if(isFindPhotoOn)
+        {
+            displayBuildings = true;
+            displayPhotos = true;
+            displayPhotographers = true;
         }
 //                displayCircleAroundPoint = true;
     }
@@ -501,4 +508,5 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
             System.out.println("redPhotographers list is empty");
         }
     }
+
 }

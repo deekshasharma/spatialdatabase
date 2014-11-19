@@ -167,6 +167,8 @@ public class FrontEnd extends JLabel {
             featureTypes.add(FeatureType.PHOTO);
             featureTypes.add(FeatureType.PHOTOGRAPHER);
             wholeSelected(featureTypes);
+            DrawMap.setDrawPoint(true);
+            DrawMap.isFindPhotoOn = true;
         }
     }
 
@@ -186,7 +188,7 @@ public class FrontEnd extends JLabel {
 
             DrawMap.setDrawPoint(true);
             DrawMap.displayCircleAroundPoint = false;
-            DrawMap.isFindPhotographer = true; // remember to turn off after submit event
+            DrawMap.isFindPhotographerOn = true; // remember to turn off after submit event
 
         }
     }
@@ -406,6 +408,7 @@ public class FrontEnd extends JLabel {
         DrawMap.redPhotos = redPhotos;
         DrawMap.redPhotographers = redPhotographers;
         map.repaint();
+//        DrawMap.isFindPhotographerOn = false;
 
 
 
