@@ -424,6 +424,7 @@ public class QueryDatabase {
             int[] yPoly = separatePolyCoordinates(buildingGeo.get(i), 1);
             polygon = new Polygon(xPoly, yPoly, xPoly.length);
         }
+        databaseQuery = " Query: "+ query;
         return polygon;
     }
 
@@ -436,6 +437,7 @@ public class QueryDatabase {
                 "MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,1)," +
                 "MDSYS.SDO_ORDINATE_ARRAY("+xyRedBuilding+")),'distance = 80') = 'TRUE'";
 
+        databaseQuery = " Query: "+ query;
         return (queryPhotoTable(query));
     }
 
@@ -448,6 +450,7 @@ public class QueryDatabase {
                 "MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,1)," +
                 "MDSYS.SDO_ORDINATE_ARRAY("+xyRedBuilding+")),'distance = 40' ) = 'TRUE'";
 
+        databaseQuery = " Query: "+query;
         return (queryPhotographerTable(query));
     }
 }

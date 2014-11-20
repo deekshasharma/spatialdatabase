@@ -431,10 +431,6 @@ public class FrontEnd extends JLabel {
         String pointCoordinates = helper.toStringPoint(p);
         QueryDatabase queryDatabase = new QueryDatabase();
         Point nearestPhotographer = queryDatabase.getPhotographerNearPoint(pointCoordinates);
-        if(nearestPhotographer != null)
-        {
-           viewQuery.setText(" Query: "+QueryDatabase.databaseQuery);
-        }
         return nearestPhotographer;
     }
 
@@ -446,12 +442,13 @@ public class FrontEnd extends JLabel {
         Helper helper = new Helper();
         String photographerLocation = helper.toStringPoint(DrawMap.photographerNearPoint);
         String polygonCoordinates = helper.toStringPolygon(DrawMap.getPolygonPoints());
+        StringBuilder builder = new StringBuilder();
+
+        builder.append(QueryDatabase.databaseQuery) ;
         List<ArrayList<Integer>> photos = queryDatabase.getPhotosInPolygonForPhotographer(polygonCoordinates,photographerLocation);
+        builder.append(QueryDatabase.databaseQuery);
         DrawMap.photoByPhotographerInPolygon = photos;
-        if(photos.size() > 0)
-        {
-            viewQuery.setText(QueryDatabase.databaseQuery);
-        }
+        viewQuery.setText(builder.toString());
         map.repaint();
     }
 
@@ -463,7 +460,8 @@ public class FrontEnd extends JLabel {
     {
         Helper helper = new Helper();
         String point = helper.toStringPoint(p);
-        return (queryDatabase.getRedBuildingCoordinates(point));
+        Polygon polygon = queryDatabase.getRedBuildingCoordinates(point);
+        return (polygon);
     }
 
     /*
@@ -475,11 +473,16 @@ public class FrontEnd extends JLabel {
         int[] y = DrawMap.getYRedBuilding();
         Helper helper = new Helper();
         String xyRedBuilding = helper.constructPolygon(x,y);
+        StringBuilder builder = new StringBuilder();
+        builder.append(QueryDatabase.databaseQuery);
         List<ArrayList<Integer>> redPhotos = queryDatabase.getRedPhotos(xyRedBuilding);
+            builder.append(QueryDatabase.databaseQuery);
         List<ArrayList<Integer>> redPhotographers = queryDatabase.getRedPhotographers(xyRedBuilding);
-
+            builder.append(QueryDatabase.databaseQuery);
         DrawMap.redPhotos = redPhotos;
         DrawMap.redPhotographers = redPhotographers;
+        viewQuery.setText("");
+        viewQuery.setText(builder.toString());
         map.repaint();
 //        DrawMap.isFindPhotographerOn = false;
 
