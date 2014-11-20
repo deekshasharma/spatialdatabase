@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
@@ -147,6 +148,7 @@ public class FrontEnd extends JLabel {
             DrawMap.startDrawPolygon = true;
             map.repaint();
         }
+
     }
 
    /*
@@ -318,24 +320,27 @@ public class FrontEnd extends JLabel {
     private void rangeSelected(List<FeatureType> featureTypes)
     {
         Helper helper = new Helper();
-        String polygonPoints = helper.toStringPolygon(DrawPolygon.getPolygonPoints());
-        int[] xRangePoly = helper.getX(DrawPolygon.getPolygonPoints());
-        int[] yRangePoly = helper. getY(DrawPolygon.getPolygonPoints());
-        Polygon rangePolygon = new Polygon(xRangePoly,yRangePoly,xRangePoly.length);
-        List<Polygon> rangePolygonList = new ArrayList<Polygon>();
-        rangePolygonList.add(rangePolygon);
+        String polygonPoints = helper.toStringPolygon(DrawMap.getPolygonPoints());
 
-        final List<Polygon> polyList = queryDatabase.getRangePolygons(featureTypes,polygonPoints);
-        List<ArrayList<Integer>> photo = queryDatabase.getRangePhotoPoints(featureTypes,polygonPoints);
-        List<ArrayList<Integer>> photographer = queryDatabase.getRangePhotographerPoints(featureTypes,polygonPoints);
-
-        frame.remove(map);
-        DrawMap.setRangePolygon(rangePolygonList);
-//        map = new DrawMap(polyList,photo,photographer,
-//                                new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"));
-                      frame.add(map);
-                      map.setVisible(true);
-                      frame.setVisible(true);
+        if(featureTypes.contains(FeatureType.BUILDING))
+        {
+            List<Polygon> polyList = queryDatabase.getRangePolygons(featureTypes,polygonPoints);
+            DrawMap.setPolyList(polyList);
+            DrawMap.setDisplayBuildingsOn(true);
+        }
+        if(featureTypes.contains(FeatureType.PHOTO))
+        {
+            List<ArrayList<Integer>> allPhotoGeo = queryDatabase.getRangePhotoPoints(featureTypes,polygonPoints);
+            DrawMap.setAllPhotoGeo(allPhotoGeo);
+            DrawMap.setDisplayPhotosOn(true);
+        }
+        if(featureTypes.contains(FeatureType.PHOTOGRAPHER))
+        {
+            List<ArrayList<Integer>> allPhotographerGeo = queryDatabase.getRangePhotographerPoints(featureTypes,polygonPoints);
+            DrawMap.setAllPhotographerGeo(allPhotographerGeo);
+            DrawMap.setDisplayPhotographersOn(true);
+        }
+        map.repaint();
     }
 
 

@@ -12,9 +12,9 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     ImageIcon imageIcon;
     private static List<ArrayList<Integer>> allPhotoGeo;
     private static List<ArrayList<Integer>> allPhotographerGeo;
-    private static List<Polygon> rangePolygon;
+    public static List<Polygon> rangePolygon;
     private static Point pointClicked;
-    private static boolean drawPointOn = false;
+    public static boolean drawPointOn = false;
     public static boolean displayBuildingsOn = false;
     public static boolean displayPhotosOn = false;
     public static boolean displayPhotographersOn = false;
@@ -48,6 +48,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     private static ArrayList polygonPointsList = new ArrayList();
 
 
+
     ///////
 
 
@@ -66,37 +67,31 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         super.paintComponent(g);
         if (displayBuildingsOn) {
             drawBuilding(g);
-            System.out.println("drawing building");
             displayBuildingsOn = false;
         }
         if (displayPhotosOn) {
             drawPhoto(g);
-            System.out.println("drawing photo");
 
             displayPhotosOn = false;
         }
         if (displayPhotographersOn) {
             drawPhotographer(g);
-            System.out.println("drawing photographer");
 
             displayPhotographersOn = false;
         }
         if (drawPointOn) {
             drawPoint(g);
-            System.out.println("drawing point");
 
 //            drawPointOn = false;
         }
         if (displayCircleAroundPoint) {
             drawCircleAroundPoint(g);
-            System.out.println("drawing circle");
 //            displayCircleAroundPoint = false;
         }
 //        drawPhotographerNearCentre(g);
 
         if(drawRedBuildingFlag)
         {
-            System.out.printf("drawing red building");
             drawRedBuilding(g);
             drawRedBuildingFlag = false;
         }
@@ -146,6 +141,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
                     polygonIsNowComplete = false;
                 }
                 polygonPointsList.add(new Point(x, y));
+                System.out.println("Single click point added "+polygonPointsList);
                 repaint();
                 break;
 
@@ -340,7 +336,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     /*
     Returns the list of polygon points
      */
-    public static List<Point> getPolygonPoints()
+    public static ArrayList getPolygonPoints()
     {
         return polygonPointsList;
     }
@@ -419,7 +415,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
             }
         } catch (NullPointerException e)
         {
-            System.out.println("NearestPhotographer is null");
+//            System.out.println("NearestPhotographer is null");
         }
     }
 
@@ -471,7 +467,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
             }
         }catch (NullPointerException e)
         {
-            System.out.println("polyList is empty");
+//            System.out.println("polyList is empty");
         }
         greenFlagOn = false;
 
@@ -497,7 +493,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
             }
         }catch (NullPointerException e)
         {
-            System.out.println("allPhotoGeoList is empty");
+//            System.out.println("allPhotoGeoList is empty");
         }
         greenFlagOn = false;
     }
@@ -518,7 +514,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
                 }
             }
         }catch (NullPointerException e){
-            System.out.println("allPhotographerGeo list is empty");
+//            System.out.println("allPhotographerGeo list is empty");
         }
     }
 
@@ -597,7 +593,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
             }
         }catch (NullPointerException e)
         {
-            System.out.println("redPhotos is empty");
+//            System.out.println("redPhotos is empty");
         }
     }
 
@@ -616,7 +612,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
                 }
             }
         }catch (NullPointerException e){
-            System.out.println("redPhotographers list is empty");
+//            System.out.println("redPhotographers list is empty");
         }
     }
 
