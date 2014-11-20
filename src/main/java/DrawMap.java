@@ -137,6 +137,8 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
 //        startDrawPolygon = false;
         }
 
+        drawPhotosInPolygonByPerson(g);
+
     }
 
 
@@ -400,30 +402,10 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
                 photographerNearPoint = FrontEnd.getPhotographerNearPoint(pointClicked);
             }
             startDrawPolygon = true;
-//            drawPointOn = false;
-//            drawPersonNearPointOn = false;
-//            mouseMoveOn = true;
         }
     }
 
 
-    /*
-   This method draws nearest photographer to the point for Find photos query#4
-    */
-    private void drawPhotographerNearPoint(Graphics graphics)
-    {
-        try{
-            if(photographerNearPoint != null)
-            {
-                Double x = photographerNearPoint.getX();
-                Double y = photographerNearPoint.getY();
-                graphics.drawOval(x.intValue(), y.intValue(),5,5);
-                graphics.setColor(Color.RED.darker().brighter().darker());
-            }
-        } catch (NullPointerException e)
-        {
-        }
-    }
 
 
     @Override
@@ -581,6 +563,48 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
                 g.fillRect(photographerNearCentre.get(0), photographerNearCentre.get(1), 5, 5);
             }
         } catch (NullPointerException e)
+        {
+        }
+    }
+
+
+
+    /*
+ This method draws nearest photographer to the point for Find photos query#4
+  */
+    private void drawPhotographerNearPoint(Graphics graphics)
+    {
+        try{
+            if(photographerNearPoint != null)
+            {
+                Double x = photographerNearPoint.getX();
+                Double y = photographerNearPoint.getY();
+                graphics.drawOval(x.intValue(), y.intValue(),5,5);
+                graphics.setColor(Color.RED.darker().brighter().darker());
+            }
+        } catch (NullPointerException e)
+        {
+        }
+    }
+
+
+    /*
+          Draws the photos inside the polygon taken by selected photographer
+     */
+
+    private void drawPhotosInPolygonByPerson(Graphics g)
+    {
+        try
+        {
+            if(photoByPhotographerInPolygon.size() > 0 )
+            {
+                for(int i = 0; i < photoByPhotographerInPolygon.size(); i++)
+                {
+                    g.setColor(Color.RED.darker());
+                    g.drawOval(photoByPhotographerInPolygon.get(i).get(0), photoByPhotographerInPolygon.get(i).get(1), 6, 6);
+                }
+            }
+        }catch (NullPointerException e)
         {
         }
     }

@@ -410,7 +410,6 @@ public class QueryDatabase {
                 "MDSYS.SDO_ORDINATE_ARRAY("+polygonPoints+"))) = 'TRUE' AND " +
                 "P.PHOTOGRAPHERID = (select Ph.PHOTOGRAPHERID from Photographer Ph where MDSYS.SDO_EQUAL(Ph.PHOTOGRAPHERLOC,\n" +
                 "mdsys.sdo_geometry(2001, null,mdsys.sdo_point_type("+photographerLocation+"),NULL, NULL)) = 'TRUE')";
-
         return (queryPhotoTable(query));
 
     }

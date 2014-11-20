@@ -400,6 +400,7 @@ public class FrontEnd extends JLabel {
         String photographerLocation = helper.toStringPoint(DrawMap.photographerNearPoint);
         String polygonCoordinates = helper.toStringPolygon(DrawMap.getPolygonPoints());
         List<ArrayList<Integer>> photos = queryDatabase.getPhotosInPolygonForPhotographer(polygonCoordinates,photographerLocation);
+        System.out.println("Photos found are : "+ photos);
         DrawMap.photoByPhotographerInPolygon = photos;
         map.repaint();
     }
