@@ -263,7 +263,7 @@ public class QueryDatabase {
     }
 
     /*
-    Returns the list of polygons inside/intersecting circle for query#3
+    Returns buildings within circle for query#3
      */
     protected List<Polygon>  getBuildingsWithinCircle(String circlePoints)
     {
@@ -287,7 +287,7 @@ public class QueryDatabase {
     }
 
     /*
-    Returns List of all PhotoCoordinates for Point Query#3
+    Returns PhotoCoordinates  within circle for Point Query#3
      */
     protected List<ArrayList<Integer>> getPhotoWithinCircle(String circlePoints)
     {
@@ -299,7 +299,7 @@ public class QueryDatabase {
     }
 
     /*
-   Returns the list of all Photographer Coordinates for Point query#3
+   Returns all Photographer locations within circle for Point query#3
     */
     protected List<ArrayList<Integer>> getPhotographerWithinCircle(String circlePoints)
     {
@@ -307,33 +307,80 @@ public class QueryDatabase {
                     "where MDSYS.SDO_RELATE(Ph.PHOTOGRAPHERLOC,\n" +
                     "MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,4)," +
                     "MDSYS.SDO_ORDINATE_ARRAY("+circlePoints+")),'mask = anyinteract') = 'TRUE')\n";
-//        System.out.println(queryPhotographerTable(photographerGeo));
             return queryPhotographerTable(photographerGeo);
     }
 
-
-
-
-
+    /*
+        Returns building polygon near to centre query#3
+     */
+    protected Polygon getBuildingNearCentre(String circlePoints, String centre)
+    {
+        String query = "SELECT B.GEO FROM building B  WHERE \n" +
+                "SDO_NN(B.GEO, mdsys.sdo_geometry(2001, null, " +
+                "mdsys.sdo_point_type("+centre+"), NULL, NULL), 'sdo_num_res=1') = 'TRUE' " +
+                "AND B.BUILDINGCODE IN (select B.BUILDINGCODE from building B where MDSYS.SDO_RELATE(B.GEO," +
+                "MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,4),MDSYS.SDO_ORDINATE_ARRAY("+circlePoints+")), 'mask = INSIDE') = 'TRUE')";
+        List<ArrayList<Integer>> geo =   queryBuildingTable(query);
+        Polygon polygon = null;
+        if(geo.size() > 0)
+        {
+            for (int i = 0; i < geo.size(); i++)
+            {
+                int[] xPoly = separatePolyCoordinates(geo.get(i), 0);
+                int[] yPoly = separatePolyCoordinates(geo.get(i), 1);
+                polygon = new Polygon(xPoly, yPoly, xPoly.length);
+            }
+        }
+        return polygon;
+    }
 
 
     /*
-    Returns the coordinates of the Photographer nearest to centre query#3
+    Returns Photo coordinates nearest to centre query#3
+     */
+    protected List<Integer> getPhotoNearCentre(String circlePoints,String centre)
+    {
+        String query = "SELECT P.PHOTOCOORDINATES FROM photo P  WHERE \n" +
+                "SDO_NN(P.PHOTOCOORDINATES, mdsys.sdo_geometry(2001, null, " +
+                "mdsys.sdo_point_type("+centre+"), NULL, NULL), 'sdo_num_res=1') = 'TRUE' " +
+                "AND " +
+                "P.PHOTOID IN (select P.PHOTOID from photo P where MDSYS.SDO_RELATE(P.PHOTOCOORDINATES," +
+                "MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,4),MDSYS.SDO_ORDINATE_ARRAY("+circlePoints+")), 'mask = INSIDE') = 'TRUE')";
+
+        List<Integer> photoNearCentre = new ArrayList<Integer>();
+        if(queryPhotoTable(query).size() > 0)
+        {
+        int x = queryPhotoTable(query).get(0).get(0);
+        int y = queryPhotoTable(query).get(0).get(1);
+        photoNearCentre.add(x);
+        photoNearCentre.add(y);
+        }
+        return photoNearCentre;
+    }
+
+
+    /*
+    Returns Photographer location nearest to centre query#3
      */
     protected List<Integer> getPhotographerNearCentre(String circlePoints, String centre)
     {
         String query = "SELECT Ph.PHOTOGRAPHERLOC FROM photographer Ph  WHERE \n" +
-                "MDSYS.SDO_NN(Ph.photographerloc, mdsys.sdo_geometry(2001, null, " +
+                "SDO_NN(Ph.photographerloc, mdsys.sdo_geometry(2001, null, " +
                 "mdsys.sdo_point_type("+centre+"), NULL, NULL), 'sdo_num_res=1') = 'TRUE' AND " +
-                "Ph.PHOTOGRAPHERID IN (select Ph.PHOTOGRAPHERID from photographer Ph where MDSYS.SDO_RELATE(Ph.PHOTOGRAPHERLOC,MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,4),MDSYS.SDO_ORDINATE_ARRAY("+circlePoints+")),'mask = anyinteract') = 'TRUE')";
+        "Ph.PHOTOGRAPHERID IN " +
+                "(select Ph.PHOTOGRAPHERID from photographer Ph where MDSYS.SDO_RELATE(Ph.PHOTOGRAPHERLOC," +
+                "MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,4),MDSYS.SDO_ORDINATE_ARRAY("+circlePoints+")), 'mask = INSIDE') = 'TRUE')";
+
 
         List<Integer> photographerNearCentre = new ArrayList<Integer>();
+        if(queryPhotographerTable(query).size() > 0)
+        {
         int x = queryPhotographerTable(query).get(0).get(0);
-        int y = queryPhotographerTable(query).get(0).get(0);
+        int y = queryPhotographerTable(query).get(0).get(1);
         photographerNearCentre.add(x);
         photographerNearCentre.add(y);
+        }
         return photographerNearCentre;
-
     }
 
     /*
@@ -341,10 +388,11 @@ public class QueryDatabase {
      */
     protected Point getPhotographerNearPoint(String point)
     {
-        List<ArrayList<Integer>> photographerLoc = new ArrayList<ArrayList<Integer>>();
+        List<ArrayList<Integer>> photographerLoc ;
         String query = "(SELECT Ph.PHOTOGRAPHERLOC FROM photographer Ph  WHERE \n" +
                 "SDO_NN(Ph.photographerloc, mdsys.sdo_geometry(2001, null, " +
                 "mdsys.sdo_point_type("+point+"), NULL, NULL), 'sdo_num_res=1') = 'TRUE')";
+
         photographerLoc = queryPhotographerTable(query);
         int x = photographerLoc.get(0).get(0);
         int y = photographerLoc.get(0).get(1);

@@ -21,7 +21,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     public static boolean greenFlagOn = false;
     private static boolean drawRedBuildingFlag = false; // how will you turn this off after find photographer query?
     private static StringBuilder circleCoordinates;
-    private static Polygon polygonNearCentre;
+    private static Polygon buildingNearCentre;
     private static List<Integer> photoNearCentre;
     private static List<Integer> photographerNearCentre;
     public static boolean displayCircleAroundPoint = false;
@@ -33,6 +33,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     public static Point photographerNearPoint;
     public static List<ArrayList<Integer>> photoByPhotographerInPolygon;
     public static boolean startDrawPolygon = false;
+    public static boolean mouseMoveOn = false;
 
     //////
     private boolean polygonIsNowComplete = false;
@@ -88,7 +89,9 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
             drawCircleAroundPoint(g);
 //            displayCircleAroundPoint = false;
         }
-//        drawPhotographerNearCentre(g);
+        drawBuildingNearCenter(g);
+        drawPhotoNearCenter(g);
+        drawPhotographerNearCentre(g);
 
         if(drawRedBuildingFlag)
         {
@@ -121,8 +124,8 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
                 draw(g, prevPoint, (Point) polygonPointsList.get(0));
             else
                 draw(g, prevPoint, trackPoint);
-        }
 //        startDrawPolygon = false;
+        }
 
     }
 
@@ -141,7 +144,6 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
                     polygonIsNowComplete = false;
                 }
                 polygonPointsList.add(new Point(x, y));
-                System.out.println("Single click point added "+polygonPointsList);
                 repaint();
                 break;
 
@@ -161,7 +163,8 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     public void mouseMoved(MouseEvent e) {
         trackPoint.x = e.getX();
         trackPoint.y = e.getY();
-        repaint();
+        if(mouseMoveOn)
+        {repaint();}
 
     }
 
@@ -249,12 +252,13 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         drawPointOn = b;
     }
 
+
     /*
         Sets the Polygon near centre for Point query #3
      */
-    public static void setPolygonNearCentre(Polygon polygonNearCentre)
+    public static void setBuildingNearCentre(Polygon buildingNearCentre)
     {
-        DrawMap.polygonNearCentre = polygonNearCentre;
+        DrawMap.buildingNearCentre = buildingNearCentre;
     }
 
     /*
@@ -266,7 +270,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     }
 
     /*
-    Sets the photographer near centre for Point query #4
+    Sets the photographer near centre for point query#3
      */
     public static void setPhotographerNearCentre(List<Integer> photographerNearCentre)
     {
@@ -354,7 +358,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
 
 
     /*
-    This method draw the point on the map for Point Query#3
+    This method draw the point on the map for Point Query#3,4,5
      */
 
     private void drawPoint(Graphics g)
@@ -362,7 +366,6 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         if (pointClicked != null) {
             Double x = pointClicked.getX();
             Double y = pointClicked.getY();
-            System.out.println(pointClicked);
             g.setColor(Color.RED);
             g.fillOval(x.intValue(), y.intValue(), 8, 8);
         }
@@ -415,7 +418,6 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
             }
         } catch (NullPointerException e)
         {
-//            System.out.println("NearestPhotographer is null");
         }
     }
 
@@ -467,7 +469,6 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
             }
         }catch (NullPointerException e)
         {
-//            System.out.println("polyList is empty");
         }
         greenFlagOn = false;
 
@@ -493,7 +494,6 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
             }
         }catch (NullPointerException e)
         {
-//            System.out.println("allPhotoGeoList is empty");
         }
         greenFlagOn = false;
     }
@@ -514,7 +514,6 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
                 }
             }
         }catch (NullPointerException e){
-//            System.out.println("allPhotographerGeo list is empty");
         }
     }
 
@@ -524,30 +523,33 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
      */
     private void drawCircleAroundPoint(Graphics g)
     {
-        Double x = pointClicked.getX();
-        Double y = pointClicked.getY();
-        int radius = 100;
-        g.setColor(Color.RED);
-        g.drawOval(x.intValue() - radius,y.intValue() - radius,2*radius,2*radius);
+        if(pointClicked != null)
+        {
+            Double x = pointClicked.getX();
+            Double y = pointClicked.getY();
+            int radius = 100;
+            g.setColor(Color.RED);
+            g.drawOval(x.intValue() - radius,y.intValue() - radius,2*radius,2*radius);
 
-        circleCoordinates = new StringBuilder();
-        circleCoordinates.append(x.intValue()).append(",")
-                .append(y.intValue() - radius).append(",")
-                .append((x.intValue()+radius)).append(",")
-                .append(y.intValue()).append(",")
-                .append(x.intValue()).append(",")
-                .append(y.intValue() + radius);
-    }
+            circleCoordinates = new StringBuilder();
+            circleCoordinates.append(x.intValue()).append(",")
+                    .append(y.intValue() - radius).append(",")
+                    .append((x.intValue()+radius)).append(",")
+                    .append(y.intValue()).append(",")
+                    .append(x.intValue()).append(",")
+                    .append(y.intValue() + radius);
+        }
+            }
 
     /*
     Draw the building nearest to center of circle Point query#3
      */
     private void drawBuildingNearCenter(Graphics g)
     {
-        if(polygonNearCentre != null)
+        if(buildingNearCentre != null)
         {
             g.setColor(Color.YELLOW.darker());
-            g.drawPolygon(polygonNearCentre);
+            g.fillPolygon(buildingNearCentre);
         }
     }
 
@@ -559,7 +561,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         if(photoNearCentre != null)
         {
             g.setColor(Color.YELLOW.darker());
-            g.drawOval(photoNearCentre.get(0), photoNearCentre.get(1), 6, 6);
+            g.fillOval(photoNearCentre.get(0), photoNearCentre.get(1), 6, 6);
         }
     }
 
@@ -568,10 +570,16 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
      */
     private void drawPhotographerNearCentre(Graphics g)
     {
-        if(photographerNearCentre != null)
+        try
         {
-            g.setColor(Color.RED.darker());
-            g.drawRect(photographerNearCentre.get(0), photographerNearCentre.get(1), 5, 5);
+            if(photographerNearCentre.size() > 0 )
+            {
+                g.setColor(Color.YELLOW.darker());
+                g.fillRect(photographerNearCentre.get(0), photographerNearCentre.get(1), 5, 5);
+            }
+        } catch (NullPointerException e)
+        {
+            System.out.println("There is no Photographer Near Centre and within Circle");
         }
     }
 
@@ -593,7 +601,6 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
             }
         }catch (NullPointerException e)
         {
-//            System.out.println("redPhotos is empty");
         }
     }
 
@@ -612,7 +619,6 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
                 }
             }
         }catch (NullPointerException e){
-//            System.out.println("redPhotographers list is empty");
         }
     }
 

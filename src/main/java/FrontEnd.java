@@ -356,12 +356,16 @@ public class FrontEnd extends JLabel {
         if(featureTypes.contains(FeatureType.BUILDING))
         {
              List<Polygon> polygonList = queryDatabase.getBuildingsWithinCircle(circleCoordinates);
+             Polygon buildingNearCentre = queryDatabase.getBuildingNearCentre(circleCoordinates,centreCoordinates);
+             DrawMap.setBuildingNearCentre(buildingNearCentre);
              DrawMap.setPolyList(polygonList);
              DrawMap.setDisplayBuildingsOn(true);
         }
         if(featureTypes.contains(FeatureType.PHOTO))
         {
             List<ArrayList<Integer>>  photoPoints = queryDatabase.getPhotoWithinCircle(circleCoordinates);
+            List<Integer> photoNearCentre = queryDatabase.getPhotoNearCentre(circleCoordinates,centreCoordinates);
+            DrawMap.setPhotoNearCentre(photoNearCentre);
             DrawMap.setAllPhotoGeo(photoPoints);
             DrawMap.setDisplayPhotosOn(true);
         }
@@ -388,6 +392,7 @@ public class FrontEnd extends JLabel {
         String pointCoordinates = helper.toStringPoint(p);
         QueryDatabase queryDatabase = new QueryDatabase();
         Point nearestPhotographer = queryDatabase.getPhotographerNearPoint(pointCoordinates);
+
         return nearestPhotographer;
     }
 
@@ -426,7 +431,6 @@ public class FrontEnd extends JLabel {
         String xyRedBuilding = helper.constructPolygon(x,y);
         List<ArrayList<Integer>> redPhotos = queryDatabase.getRedPhotos(xyRedBuilding);
         List<ArrayList<Integer>> redPhotographers = queryDatabase.getRedPhotographers(xyRedBuilding);
-        System.out.println("Photographers without intersecting any building are "+redPhotographers);
 
         DrawMap.redPhotos = redPhotos;
         DrawMap.redPhotographers = redPhotographers;
