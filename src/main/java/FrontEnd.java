@@ -1,9 +1,9 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
 import java.util.*;
 import java.util.List;
+import javax.management.Query;
 import javax.swing.*;
 
 
@@ -22,12 +22,12 @@ public class FrontEnd extends JLabel {
     private JRadioButton point;
     private JRadioButton findPhoto;
     private JRadioButton findPhotographer;
-    private  JTextField viewQuery;
+    private  JTextArea viewQuery;
     private Polygon poly;
     private JPanel panel;
     private JPanel panel1;
 
-    private String path = "/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG";
+    private String path = "map.JPG";
     private static QueryDatabase queryDatabase = new QueryDatabase();
 
 
@@ -201,19 +201,11 @@ public class FrontEnd extends JLabel {
 
     private void setQueryTextField()
     {
-        viewQuery = new JTextField("Query",20);
-        JScrollBar scrollBar = new JScrollBar(JScrollBar.VERTICAL);
-        BoundedRangeModel brm = viewQuery.getHorizontalVisibility();
-        scrollBar.setModel(brm);
-        frame.add(scrollBar);
-        frame.add(viewQuery);
-
-
-        viewQuery.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("Text: " + viewQuery.getText());
-            }
-        });
+        viewQuery = new JTextArea("Query",15,50);
+        viewQuery.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(viewQuery);
+        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        frame.add(scrollPane);
         frame.setVisible(true);
     }
 
@@ -287,24 +279,38 @@ public class FrontEnd extends JLabel {
     */
     private void wholeSelected(List<FeatureType> featureTypes)
     {
+        StringBuilder builder = new StringBuilder();
         if(featureTypes.contains(FeatureType.BUILDING))
         {
             List<Polygon> polyList = queryDatabase.getWholePolygons(featureTypes);
+            if(polyList.size() > 0)
+            {
+                builder.append(QueryDatabase.databaseQuery);
+            }
             DrawMap.setPolyList(polyList);
             DrawMap.setDisplayBuildingsOn(true);
         }
         if(featureTypes.contains(FeatureType.PHOTO))
         {
             List<ArrayList<Integer>> allPhotoGeo = queryDatabase.getWholePhotoPoints(featureTypes);
+            if(allPhotoGeo.size() > 0)
+            {
+                builder.append(QueryDatabase.databaseQuery);
+            }
             DrawMap.setAllPhotoGeo(allPhotoGeo);
             DrawMap.setDisplayPhotosOn(true);
         }
         if(featureTypes.contains(FeatureType.PHOTOGRAPHER))
         {
             List<ArrayList<Integer>> allPhotographerGeo = queryDatabase.getWholePhotographerPoints(featureTypes);
+            if(allPhotographerGeo.size() > 0)
+            {
+                builder.append(QueryDatabase.databaseQuery);
+            }
             DrawMap.setAllPhotographerGeo(allPhotographerGeo);
             DrawMap.setDisplayPhotographersOn(true);
         }
+        viewQuery.setText(builder.toString());
         map.repaint();
     }
 

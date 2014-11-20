@@ -1,7 +1,5 @@
 import oracle.spatial.geometry.JGeometry;
 import oracle.sql.STRUCT;
-import sun.org.mozilla.javascript.internal.ast.ArrayLiteral;
-
 import java.awt.*;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -13,25 +11,9 @@ import java.util.List;
 public class QueryDatabase {
     private static DatabaseConnection dbConnection = new DatabaseConnection();
     private static Connection connection = dbConnection.getConnection();
+    public static String databaseQuery = null;
 
 
-    public static void main(String[] args) {
-        QueryDatabase database = new QueryDatabase();
-        String point = " 119,160,NULL";
-        database.getRedBuildingCoordinates(point);
-//        String s = "323,200,479,417,690,244";
-//        database.getPhotographerNearCentre(s,point);
-        //[[380, 66, 493, 126, 475, 157, 363, 97, 380, 66]]
-        dbConnection.closeConnection();
-
-//        List<FeatureType> featureTypes = new ArrayList<FeatureType>();
-//        featureTypes.add(FeatureType.BUILDING);
-//        featureTypes.add(FeatureType.PHOTO);
-//        featureTypes.add(FeatureType.PHOTOGRAPHER);
-//        database.getRangePolygons(featureTypes,s);
-//        database.getRangePhotoPoints(featureTypes,s);
-//        database.getRangePhotographerPoints(featureTypes);
-    }
     /*
     This method returns the List of ArrayList containing coordinates of each building
      */
@@ -154,18 +136,16 @@ public class QueryDatabase {
     {
         Polygon polygon;
         List<Polygon> polyList = new ArrayList<Polygon>();
-        String buildingGeo = "select GEO from building";
+        String query = "select GEO from building";
 
-//        if(featureTypes.contains(FeatureType.BUILDING))
-//        {
-                List<ArrayList<Integer>> allBuildingsGeo = queryBuildingTable(buildingGeo);
+                List<ArrayList<Integer>> allBuildingsGeo = queryBuildingTable(query);
                 for (int i = 0; i < allBuildingsGeo.size(); i++) {
                     int[] xPoly = separatePolyCoordinates(allBuildingsGeo.get(i), 0);
                     int[] yPoly = separatePolyCoordinates(allBuildingsGeo.get(i), 1);
                     polygon = new Polygon(xPoly, yPoly, xPoly.length);
                     polyList.add(polygon);
                 }
-//        }
+         databaseQuery = " Query:"+ query;
         return polyList;
     }
 
@@ -176,11 +156,9 @@ public class QueryDatabase {
     {
         List<ArrayList<Integer>> allPhotoGeo = new ArrayList<ArrayList<Integer>>();
 
-//       if(featureTypes.contains(FeatureType.PHOTO))
-//       {
-            String photoGeo = "select PHOTOCOORDINATES from photo";
-           allPhotoGeo = queryPhotoTable(photoGeo);
-//       }
+            String query = "select PHOTOCOORDINATES from photo";
+           allPhotoGeo = queryPhotoTable(query);
+        databaseQuery = " Query: "+query;
          return allPhotoGeo;
     }
 
@@ -191,11 +169,9 @@ public class QueryDatabase {
     {
         List<ArrayList<Integer>> allPhotographerGeo = new ArrayList<ArrayList<Integer>>();
 
-//        if(featureTypes.contains(FeatureType.PHOTOGRAPHER))
-//        {
-            String photographerGeo = "select PHOTOGRAPHERLOC from photographer";
-            allPhotographerGeo = queryPhotographerTable(photographerGeo);
-//        }
+            String query = "select PHOTOGRAPHERLOC from photographer";
+            allPhotographerGeo = queryPhotographerTable(query);
+            databaseQuery = " Query: "+ query;
             return allPhotographerGeo;
     }
 
@@ -460,5 +436,42 @@ public class QueryDatabase {
         return (queryPhotographerTable(query));
     }
 
+
+   /*
+    protected String getWholeRegionQuery()
+    {
+      return("Query1: select GEO from Building, Query2: select PHOTOCOORDINATES from Photo, Query3: select PHOTOGRAPHERLOC from Photographer");
+    }
+    protected String getRangeQuery()
+    {
+        return (" Query1 : select B.GEO from building B where MDSYS.SDO_RELATE(B.GEO, MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,1),MDSYS.SDO_ORDINATE_ARRAY(\"+polyPoints+\")),'mask = anyinteract') = 'TRUE')), " +
+                "Query2:select P.PHOTOCOORDINATES from photo P where MDSYS.SDO_RELATE(P.PHOTOCOORDINATES,MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,1),MDSYS.SDO_ORDINATE_ARRAY(\"+polyPoints+\")),'mask = anyinteract') = 'TRUE' " +
+        "Query3: select Ph.PHOTOGRAPHERLOC from photographer Ph where MDSYS.SDO_RELATE(Ph.PHOTOGRAPHERLOC,MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,1),MDSYS.SDO_ORDINATE_ARRAY(\"+polyPoints+\")),'mask = anyinteract') = 'TRUE')");
+    }
+
+    protected String getPointQuery()
+    {
+        String query = "Query1: select B.GEO from building B where MDSYS.SDO_RELATE(B.GEO,MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,4),MDSYS.SDO_ORDINATE_ARRAY(circlePoints)),'mask = anyinteract') = 'TRUE’+ " +
+            "Query2: select P.PHOTOCOORDINATES from photo P where MDSYS.SDO_RELATE(P.PHOTOCOORDINATES,MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,4),MDSYS.SDO_ORDINATE_ARRAY(circlePoints)),'mask = anyinteract') = 'TRUE’+ " +
+            "Query3: select Ph.PHOTOGRAPHERLOC from photographer Ph where MDSYS.SDO_RELATE(Ph.PHOTOGRAPHERLOC,MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,4),MDSYS.SDO_ORDINATE_ARRAY(circlePoints)),'mask = anyinteract') = 'TRUE’+ " +
+            "Query4: SELECT B.GEO FROM building B  WHERE SDO_NN(B.GEO, mdsys.sdo_geometry(2001, null,mdsys.sdo_point_type(centre), NULL, NULL), 'sdo_num_res=1') = 'TRUE' AND B.BUILDINGCODE IN (select B.BUILDINGCODE from building B where MDSYS.SDO_RELATE(B.GEO,MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,4),MDSYS.SDO_ORDINATE_ARRAY(circlePoints)), 'mask = INSIDE') = 'TRUE’+" +
+            "Query5: SELECT P.PHOTOCOORDINATES FROM photo P  WHERE SDO_NN(P.PHOTOCOORDINATES, mdsys.sdo_geometry(2001, null,mdsys.sdo_point_type(centre), NULL, NULL), 'sdo_num_res=1') = 'TRUE' AND P.PHOTOID IN (select P.PHOTOID from photo P where MDSYS.SDO_RELATE(P.PHOTOCOORDINATES,MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,4),MDSYS.SDO_ORDINATE_ARRAY(circlePoints)), 'mask = INSIDE') = 'TRUE’+ " +
+            "Query6: SELECT Ph.PHOTOGRAPHERLOC FROM photographer Ph  WHERE SDO_NN(Ph.photographerloc, mdsys.sdo_geometry(2001, null, mdsys.sdo_point_type(centre), NULL, NULL), 'sdo_num_res=1') = 'TRUE' AND Ph.PHOTOGRAPHERID IN  (select Ph.PHOTOGRAPHERID from photographer Ph where MDSYS.SDO_RELATE(Ph.PHOTOGRAPHERLOC,MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,4),MDSYS.SDO_ORDINATE_ARRAY(circlePoints)), 'mask = INSIDE') = 'TRUE’";
+
+        return  query;
+    }
+
+    protected String getFindPhotosQuery()
+    {
+        String query = "";
+        return query;
+    }
+
+    protected String  getFindPhotographerQuery()
+    {
+        String query = "Query1 : select B.GEO from building B where MDSYS.SDO_CONTAINS(B.GEO,mdsys.sdo_geometry(2001, null,mdsys.sdo_point_type(point), NULL, NULL)) = 'TRUE' + Query2: SELECT P.PHOTOCOORDINATES from photo P WHERE MDSYS.SDO_WITHIN_DISTANCE(P.PHOTOCOORDINATES,MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,1),MDSYS.SDO_ORDINATE_ARRAY(xyRedBuilding)),'distance = 80') = 'TRUE’+ Query3: SELECT Ph.PHOTOGRAPHERLOC from photographer Ph WHERE MDSYS.SDO_WITHIN_DISTANCE(Ph.PHOTOGRAPHERLOC,MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,1),MDSYS.SDO_ORDINATE_ARRAY(xyRedBuilding)),'distance = 40' ) = 'TRUE'";
+        return query;
+    }
+    */
 
 }
