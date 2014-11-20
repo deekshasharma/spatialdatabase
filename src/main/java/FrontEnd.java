@@ -122,9 +122,9 @@ public class FrontEnd extends JLabel {
     class wholeRadioAction implements ActionListener{
         public void actionPerformed(ActionEvent e)
         {
-            DrawMap.setDisplayBuildings(false);
-            DrawMap.setDisplayPhotos(false);
-            DrawMap.setDisplayPhotographers(false);
+            DrawMap.setDisplayBuildingsOn(false);
+            DrawMap.setDisplayPhotosOn(false);
+            DrawMap.setDisplayPhotographersOn(false);
             DrawMap.setDrawPointOn(false);
             map.repaint();
         }
@@ -136,11 +136,16 @@ public class FrontEnd extends JLabel {
 
         public void actionPerformed (ActionEvent e)
         {
-            frame.remove(map);
-            map = new DrawPolygon(new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"));
-            frame.add(map);
-            frame.setVisible(true);
-            map.setVisible(true);
+//            frame.remove(map);
+//            map = new DrawPolygon(new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"));
+//            frame.add(map);
+//            frame.setVisible(true);
+//            map.setVisible(true);
+            DrawMap.displayBuildingsOn = false;
+            DrawMap.displayPhotosOn = false;
+            DrawMap.displayPhotographersOn = false;
+            DrawMap.startDrawPolygon = true;
+            map.repaint();
         }
     }
 
@@ -289,19 +294,19 @@ public class FrontEnd extends JLabel {
         {
             List<Polygon> polyList = queryDatabase.getWholePolygons(featureTypes);
             DrawMap.setPolyList(polyList);
-            DrawMap.setDisplayBuildings(true);
+            DrawMap.setDisplayBuildingsOn(true);
         }
         if(featureTypes.contains(FeatureType.PHOTO))
         {
             List<ArrayList<Integer>> allPhotoGeo = queryDatabase.getWholePhotoPoints(featureTypes);
             DrawMap.setAllPhotoGeo(allPhotoGeo);
-            DrawMap.setDisplayPhotos(true);
+            DrawMap.setDisplayPhotosOn(true);
         }
         if(featureTypes.contains(FeatureType.PHOTOGRAPHER))
         {
             List<ArrayList<Integer>> allPhotographerGeo = queryDatabase.getWholePhotographerPoints(featureTypes);
             DrawMap.setAllPhotographerGeo(allPhotographerGeo);
-            DrawMap.setDisplayPhotographers(true);
+            DrawMap.setDisplayPhotographersOn(true);
         }
         map.repaint();
     }
@@ -342,18 +347,18 @@ public class FrontEnd extends JLabel {
         String circleCoordinates = DrawMap.getCircleCoordinates();
         Helper helper = new Helper();
         String centreCoordinates = helper.toStringPoint(DrawMap.getPointClicked());
-        DrawMap.setGreenFlag(true);
+        DrawMap.setGreenFlagOn(true);
         if(featureTypes.contains(FeatureType.BUILDING))
         {
              List<Polygon> polygonList = queryDatabase.getBuildingsWithinCircle(circleCoordinates);
              DrawMap.setPolyList(polygonList);
-             DrawMap.setDisplayBuildings(true);
+             DrawMap.setDisplayBuildingsOn(true);
         }
         if(featureTypes.contains(FeatureType.PHOTO))
         {
             List<ArrayList<Integer>>  photoPoints = queryDatabase.getPhotoWithinCircle(circleCoordinates);
             DrawMap.setAllPhotoGeo(photoPoints);
-            DrawMap.setDisplayPhotos(true);
+            DrawMap.setDisplayPhotosOn(true);
         }
         if(featureTypes.contains(FeatureType.PHOTOGRAPHER))
         {
@@ -362,7 +367,7 @@ public class FrontEnd extends JLabel {
 
             DrawMap.setPhotographerNearCentre(photographerNearCentre);
             DrawMap.setAllPhotographerGeo(photographerPoints);
-            DrawMap.setDisplayPhotographers(true);
+            DrawMap.setDisplayPhotographersOn(true);
         }
         map.repaint();
         // turn off displayCircleAroundPoint

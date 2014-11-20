@@ -15,10 +15,10 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     private static List<Polygon> rangePolygon;
     private static Point pointClicked;
     private static boolean drawPointOn = false;
-    private static boolean displayBuildings = false;
-    private static boolean displayPhotos = false;
-    private static boolean displayPhotographers = false;
-    private static boolean greenFlag = false;
+    public static boolean displayBuildingsOn = false;
+    public static boolean displayPhotosOn = false;
+    public static boolean displayPhotographersOn = false;
+    public static boolean greenFlagOn = false;
     private static boolean drawRedBuildingFlag = false; // how will you turn this off after find photographer query?
     private static StringBuilder circleCoordinates;
     private static Polygon polygonNearCentre;
@@ -32,7 +32,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     public static List<ArrayList<Integer>> redPhotographers;
     public static Point photographerNearPoint;
     public static List<ArrayList<Integer>> photoByPhotographerInPolygon;
-    private static boolean startDrawPolygon = false;
+    public static boolean startDrawPolygon = false;
 
     //////
     private boolean polygonIsNowComplete = false;
@@ -64,22 +64,22 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (displayBuildings) {
+        if (displayBuildingsOn) {
             drawBuilding(g);
             System.out.println("drawing building");
-            displayBuildings = false;
+            displayBuildingsOn = false;
         }
-        if (displayPhotos) {
+        if (displayPhotosOn) {
             drawPhoto(g);
             System.out.println("drawing photo");
 
-            displayPhotos = false;
+            displayPhotosOn = false;
         }
-        if (displayPhotographers) {
+        if (displayPhotographersOn) {
             drawPhotographer(g);
             System.out.println("drawing photographer");
 
-            displayPhotographers = false;
+            displayPhotographersOn = false;
         }
         if (drawPointOn) {
             drawPoint(g);
@@ -127,7 +127,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
             else
                 draw(g, prevPoint, trackPoint);
         }
-        startDrawPolygon = false;
+//        startDrawPolygon = false;
 
     }
 
@@ -221,27 +221,27 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     /*
        Sets the boolean flag to display buildings
      */
-    public static void setDisplayBuildings(boolean b)
+    public static void setDisplayBuildingsOn(boolean b)
     {
-        displayBuildings = b;
+        displayBuildingsOn = b;
     }
 
 /*
        Sets the boolean flag to display photos
      */
 
-    public static void setDisplayPhotos(boolean b)
+    public static void setDisplayPhotosOn(boolean b)
     {
-        displayPhotos = b;
+        displayPhotosOn = b;
     }
 
     /*
        Sets the boolean flag to display photographers
      */
 
-    public static void setDisplayPhotographers(boolean b)
+    public static void setDisplayPhotographersOn(boolean b)
     {
-        displayPhotographers = b;
+        displayPhotographersOn = b;
     }
 
     /*
@@ -281,9 +281,9 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     /*
     Sets the green flag
      */
-    public static void setGreenFlag(Boolean b)
+    public static void setGreenFlagOn(Boolean b)
     {
-        DrawMap.greenFlag = b;
+        DrawMap.greenFlagOn = b;
     }
 
     /*
@@ -372,9 +372,9 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         }
         if(isFindPhotographerOn)
         {
-            displayBuildings = true;
-            displayPhotos = true;
-            displayPhotographers = true;
+            displayBuildingsOn = true;
+            displayPhotosOn = true;
+            displayPhotographersOn = true;
             if(pointClicked != null)
             {
             drawRedBuildingFlag = true;
@@ -382,14 +382,14 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         }
         if(isFindPhotoOn)
         {
-            displayBuildings = true;
-            displayPhotos = true;
-            displayPhotographers = true;
+            displayBuildingsOn = true;
+            displayPhotosOn = true;
+            displayPhotographersOn = true;
             if(pointClicked != null)
             {
                 photographerNearPoint = FrontEnd.getPhotographerNearPoint(pointClicked);
             }
-            startDrawPolygon = true;
+//            startDrawPolygon = true;
         }
 //                displayCircleAroundPoint = true;
     }
@@ -425,8 +425,8 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
 
 
     @Override
-    public void mouseReleased(MouseEvent e) {
-
+    public void mouseReleased(MouseEvent e)
+    {
     }
 
     @Override
@@ -440,7 +440,12 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     }
 
     @Override
-    public void mouseDragged(MouseEvent e) {
+    public void mouseDragged(MouseEvent e)
+    {
+
+        startDrawPolygon = true;
+//        drawPointOn = false;
+        repaint();
 
     }
 
@@ -458,7 +463,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
                 for(Polygon poly:polyList)
 
                 {
-                    if(greenFlag)
+                    if(greenFlagOn)
                     {g.setColor(Color.GREEN);}
                     else{g.setColor(Color.YELLOW);}
                     g.drawPolygon(poly);
@@ -468,7 +473,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         {
             System.out.println("polyList is empty");
         }
-        greenFlag = false;
+        greenFlagOn = false;
 
     }
 
@@ -484,7 +489,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
             {
                 for(int i = 0; i < allPhotoGeo.size(); i++)
                 {
-                    if(greenFlag)
+                    if(greenFlagOn)
                     {g.setColor(Color.GREEN);}
                     else {g.setColor(Color.BLUE);}
                     g.drawOval(allPhotoGeo.get(i).get(0), allPhotoGeo.get(i).get(1), 6, 6);
@@ -494,7 +499,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         {
             System.out.println("allPhotoGeoList is empty");
         }
-        greenFlag = false;
+        greenFlagOn = false;
     }
 
 
