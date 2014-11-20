@@ -3,7 +3,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.List;
-import javax.management.Query;
 import javax.swing.*;
 
 
@@ -81,6 +80,23 @@ public class FrontEnd extends JLabel {
         frame.setVisible(true);
     }
 
+    /*
+    Prepare Query Text Area
+     */
+
+    private void setQueryTextField()
+    {
+        viewQuery = new JTextArea("Query" , 5,50);
+        viewQuery.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(viewQuery);
+        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        frame.add(scrollPane);
+        frame.setVisible(true);
+    }
+
+    /*
+    Prepare the Query Radio buttons
+     */
     private void setQuery()
     {
         panel1 = new JPanel();
@@ -116,38 +132,34 @@ public class FrontEnd extends JLabel {
         panel1.add(findPhotographer);
         frame.add(panel1);
         frame.setVisible(true);
-
     }
 
+    /*
+    Action class for Whole Region radio button
+     */
     class wholeRadioAction implements ActionListener{
         public void actionPerformed(ActionEvent e)
         {
-            DrawMap.setDisplayBuildingsOn(false);
-            DrawMap.setDisplayPhotosOn(false);
-            DrawMap.setDisplayPhotographersOn(false);
-            DrawMap.setDrawPointOn(false);
+            clearMap();
             map.repaint();
         }
     }
       /*
-      Handles the action of Range Query radio button
-       */
+    Action class for Range Query radio button
+     */
      class rangeRadioAction implements ActionListener{
 
         public void actionPerformed (ActionEvent e)
         {
-            DrawMap.displayBuildingsOn = false;
-            DrawMap.displayPhotosOn = false;
-            DrawMap.displayPhotographersOn = false;
+            clearMap();
             DrawMap.startDrawPolygon = true;
             map.repaint();
         }
-
     }
 
-   /*
-      Handles the action of Find Photos radio button
-       */
+    /*
+   Action class for Point Query radio button
+    */
     class pointRadioAction implements ActionListener{
        public void  actionPerformed(ActionEvent e)
        {
@@ -158,7 +170,7 @@ public class FrontEnd extends JLabel {
    }
 
     /*
-      Handles the action of Find Photos radio button
+   Action class for Find Photos radio button
        */
     class photoRadioAction implements ActionListener{
         public void actionPerformed(ActionEvent e)
@@ -174,38 +186,46 @@ public class FrontEnd extends JLabel {
     }
 
     /*
-    Handles the action of Find Photographer radio buttion
+   Action class for Find Photographer radio button
      */
 
     class photographerRadioAction implements ActionListener{
 
         public void actionPerformed(ActionEvent e)
         {
+            clearMap();
+            map.repaint();
             List<FeatureType> featureTypes = new ArrayList<FeatureType>();
             featureTypes.add(FeatureType.BUILDING);
             featureTypes.add(FeatureType.PHOTO);
             featureTypes.add(FeatureType.PHOTOGRAPHER);
             wholeSelected(featureTypes);
-
             DrawMap.setDrawPointOn(true);
-            DrawMap.displayCircleAroundPoint = false;
-            DrawMap.isFindPhotographerOn = true; // remember to turn off after submit event
-
+            DrawMap.isFindPhotographerOn = true;
         }
     }
 
-    /*
-    Query Text Field functionality
-     */
 
-    private void setQueryTextField()
+
+    protected void clearMap()
     {
-        viewQuery = new JTextArea("Query" , 5,50);
-        viewQuery.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(viewQuery);
-        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        frame.add(scrollPane);
-        frame.setVisible(true);
+        DrawMap.displayBuildingsOn = false;
+        DrawMap.displayPhotosOn = false;
+        DrawMap.displayPhotographersOn = false;
+        DrawMap.drawPointOn = false;
+        DrawMap.displayCircleAroundPoint = false;
+        DrawMap.startDrawPolygon = false;
+        DrawMap.mouseMoveOn = false;
+        DrawMap.isFindPhotoOn = false;
+        DrawMap.isFindPhotographerOn = false;
+        DrawMap.greenFlagOn = false;
+        DrawMap.drawRedBuildingOn = false;
+        DrawMap.drawPersonNearPointOn = false;
+        DrawMap.setDrawRedPhotosOn(false);
+        DrawMap.setDrawRedPhotographersOn(false);
+        DrawMap.setBuildingNearCentreOn(false);
+        DrawMap.setPhotoNearCentreOn(false);
+        DrawMap.setPhotographerNearCentreOn(false);
     }
 
     /*
@@ -383,6 +403,7 @@ public class FrontEnd extends JLabel {
              DrawMap.setBuildingNearCentre(buildingNearCentre);
              DrawMap.setPolyList(polygonList);
              DrawMap.setDisplayBuildingsOn(true);
+             DrawMap.setBuildingNearCentreOn(true);
         }
         if(featureTypes.contains(FeatureType.PHOTO))
         {
@@ -399,6 +420,7 @@ public class FrontEnd extends JLabel {
             DrawMap.setPhotoNearCentre(photoNearCentre);
             DrawMap.setAllPhotoGeo(photoPoints);
             DrawMap.setDisplayPhotosOn(true);
+            DrawMap.setPhotoNearCentreOn(true);
         }
         if(featureTypes.contains(FeatureType.PHOTOGRAPHER))
         {
@@ -415,6 +437,7 @@ public class FrontEnd extends JLabel {
             DrawMap.setPhotographerNearCentre(photographerNearCentre);
             DrawMap.setAllPhotographerGeo(photographerPoints);
             DrawMap.setDisplayPhotographersOn(true);
+            DrawMap.setPhotographerNearCentreOn(true);
         }
         viewQuery.setText(builder.toString());
         map.repaint();
@@ -480,14 +503,12 @@ public class FrontEnd extends JLabel {
         List<ArrayList<Integer>> redPhotographers = queryDatabase.getRedPhotographers(xyRedBuilding);
             builder.append(QueryDatabase.databaseQuery);
         DrawMap.redPhotos = redPhotos;
+        DrawMap.setDrawRedPhotosOn(true);
         DrawMap.redPhotographers = redPhotographers;
+        DrawMap.setDrawRedPhotographersOn(true);
         viewQuery.setText("");
         viewQuery.setText(builder.toString());
         map.repaint();
-//        DrawMap.isFindPhotographerOn = false;
-
-
-
     }
 
 

@@ -19,7 +19,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     public static boolean displayPhotosOn = false;
     public static boolean displayPhotographersOn = false;
     public static boolean greenFlagOn = false;
-    private static boolean drawRedBuildingFlag = false; // how will you turn this off after find photographer query?
+    public static boolean drawRedBuildingOn = false; // how will you turn this off after find photographer query?
     private static StringBuilder circleCoordinates;
     private static Polygon buildingNearCentre;
     private static List<Integer> photoNearCentre;
@@ -34,7 +34,13 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     public static List<ArrayList<Integer>> photoByPhotographerInPolygon;
     public static boolean startDrawPolygon = false;
     public static boolean mouseMoveOn = false;
-    private static boolean drawPersonNearPointOn = false;
+    public static boolean drawPersonNearPointOn = false;
+    private static boolean drawRedPhotosOn = false;
+    private static boolean drawRedPhotographersOn = false;
+    private static boolean buildingNearCentreOn = false;
+    private static boolean photoNearCentreOn = false;
+    private static boolean photographerNearCentreOn = false;
+
 
     //////
     private boolean polygonIsNowComplete = false;
@@ -82,27 +88,27 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         if (drawPointOn) {
             drawPoint(g);
 
-//            drawPointOn = false;
         }
         if (displayCircleAroundPoint) {
             drawCircleAroundPoint(g);
-//            displayCircleAroundPoint = false;
         }
-        drawBuildingNearCenter(g);
-        drawPhotoNearCenter(g);
-        drawPhotographerNearCentre(g);
+        if(buildingNearCentreOn) {drawBuildingNearCenter(g);}                   //For query#3
+        if(photoNearCentreOn) {drawPhotoNearCenter(g);}                         //For query#3
+        if(photographerNearCentreOn) {drawPhotographerNearCentre(g);}           //For query#3
 
         if(drawPersonNearPointOn)
         {
             drawPhotographerNearPoint(g);
         }
-        if(drawRedBuildingFlag)
+        if(drawRedBuildingOn)
         {
             drawRedBuilding(g);
-            drawRedBuildingFlag = false;
+            drawRedBuildingOn = false;
         }
-        drawRedPhotos(g);
-        drawPhotographersNearRedBuilding(g);
+        if(drawRedPhotosOn)
+        {drawRedPhotos(g);}
+        if(drawRedPhotographersOn)
+        {drawPhotographersNearRedBuilding(g);}
 
         //////////////////////////////////Polygon code starting
         if(startDrawPolygon)
@@ -226,11 +232,10 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
      */
     public static   void setAllPhotographerGeo(List<ArrayList<Integer>> allPhotographerGeo){
         DrawMap.allPhotographerGeo = allPhotographerGeo;
-
     }
 
     /*
-       Sets the boolean flag to display buildings
+       Sets the boolean flag to display all buildings
      */
     public static void setDisplayBuildingsOn(boolean b)
     {
@@ -238,7 +243,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     }
 
 /*
-       Sets the boolean flag to display photos
+       Sets the boolean flag to display all photos
      */
 
     public static void setDisplayPhotosOn(boolean b)
@@ -247,7 +252,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     }
 
     /*
-       Sets the boolean flag to display photographers
+       Sets the boolean flag to display all photographers
      */
 
     public static void setDisplayPhotographersOn(boolean b)
@@ -265,46 +270,67 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     }
 
 
-    /*
-        Sets the Polygon near centre for Point query #3
-     */
+   /* This method sets the red polygon for the range query#2  */
+    public static  void setRangePolygon(List<Polygon> rangePolygon)
+    {
+        DrawMap.rangePolygon = rangePolygon;
+    }
+
+
+     /*   Sets the Polygon near centre for Point query #3 */
     public static void setBuildingNearCentre(Polygon buildingNearCentre)
     {
         DrawMap.buildingNearCentre = buildingNearCentre;
     }
 
+    /* Set the indicator for building near centre query#3*/
+    public static void setBuildingNearCentreOn(Boolean b)
+    {
+         buildingNearCentreOn = b;
+    }
+
     /*
-    Sets the Photo near centre for Point query #3
-     */
+    Sets the Photo near centre for Point query #3  */
     public static void setPhotoNearCentre(List<Integer> photoNearCentre)
     {
         DrawMap.photoNearCentre = photoNearCentre;
     }
 
-    /*
-    Sets the photographer near centre for point query#3
-     */
+    /*Set the boolean indicator to display for photo near centre Point query #3 */
+    public static void setPhotoNearCentreOn(boolean b) { photoNearCentreOn = b;}
+
+
+    /* Sets the photographer near centre for point query#3    */
     public static void setPhotographerNearCentre(List<Integer> photographerNearCentre)
     {
         DrawMap.photographerNearCentre = photographerNearCentre;
     }
 
+    /* Set the indicator to display photographer near centre for point query#3 */
+    public static void setPhotographerNearCentreOn(boolean b){photographerNearCentreOn = b;}
 
-    /*
-    Sets the green flag
-     */
+
+    /* Sets the green flag for query#3 */
     public static void setGreenFlagOn(Boolean b)
     {
         DrawMap.greenFlagOn = b;
     }
 
-    /*
-   This method sets the red polygon for the range query
-    */
-    public static  void setRangePolygon(List<Polygon> rangePolygon)
+
+
+    /*  Setter for red photos in Query#5 */
+    public static void setDrawRedPhotosOn(Boolean b)
     {
-        DrawMap.rangePolygon = rangePolygon;
+        drawRedPhotosOn = b;
     }
+
+    /*  Setter for red photographers in Query#5 */
+    public static void setDrawRedPhotographersOn(Boolean b)
+    {
+        drawRedPhotographersOn = b;
+    }
+
+
 
 
     /* Getter Methods
@@ -388,7 +414,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
             displayPhotographersOn = true;
             if(pointClicked != null)
             {
-            drawRedBuildingFlag = true;
+            drawRedBuildingOn = true;
             }
         }
         if(isFindPhotoOn)
