@@ -201,10 +201,12 @@ public class FrontEnd extends JLabel {
 
     private void setQueryTextField()
     {
-        viewQuery = new JTextArea("Query",15,50);
-        viewQuery.setEditable(false);
+        viewQuery = new JTextArea("Query" , 5,50);
+//        viewQuery.setBounds(145, 51, 327, 53);
+//        viewQuery.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(viewQuery);
         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+//        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         frame.add(scrollPane);
         frame.setVisible(true);
     }
@@ -322,25 +324,39 @@ public class FrontEnd extends JLabel {
     {
         Helper helper = new Helper();
         String polygonPoints = helper.toStringPolygon(DrawMap.getPolygonPoints());
+        StringBuilder builder = new StringBuilder();
 
         if(featureTypes.contains(FeatureType.BUILDING))
         {
             List<Polygon> polyList = queryDatabase.getRangePolygons(featureTypes,polygonPoints);
+            if(polyList.size() > 0)
+            {
+                builder.append(QueryDatabase.databaseQuery);
+            }
             DrawMap.setPolyList(polyList);
             DrawMap.setDisplayBuildingsOn(true);
         }
         if(featureTypes.contains(FeatureType.PHOTO))
         {
             List<ArrayList<Integer>> allPhotoGeo = queryDatabase.getRangePhotoPoints(featureTypes,polygonPoints);
+            if(allPhotoGeo.size() > 0)
+            {
+                builder.append(QueryDatabase.databaseQuery);
+            }
             DrawMap.setAllPhotoGeo(allPhotoGeo);
             DrawMap.setDisplayPhotosOn(true);
         }
         if(featureTypes.contains(FeatureType.PHOTOGRAPHER))
         {
             List<ArrayList<Integer>> allPhotographerGeo = queryDatabase.getRangePhotographerPoints(featureTypes,polygonPoints);
+            if(allPhotographerGeo.size() > 0)
+            {
+                builder.append(QueryDatabase.databaseQuery);
+            }
             DrawMap.setAllPhotographerGeo(allPhotographerGeo);
             DrawMap.setDisplayPhotographersOn(true);
         }
+        viewQuery.setText(builder.toString());
         map.repaint();
     }
 
