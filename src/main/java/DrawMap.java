@@ -34,6 +34,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     public static List<ArrayList<Integer>> photoByPhotographerInPolygon;
     public static boolean startDrawPolygon = false;
     public static boolean mouseMoveOn = false;
+    private static boolean drawPersonNearPointOn = false;
 
     //////
     private boolean polygonIsNowComplete = false;
@@ -72,12 +73,10 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         }
         if (displayPhotosOn) {
             drawPhoto(g);
-
             displayPhotosOn = false;
         }
         if (displayPhotographersOn) {
             drawPhotographer(g);
-
             displayPhotographersOn = false;
         }
         if (drawPointOn) {
@@ -93,6 +92,10 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         drawPhotoNearCenter(g);
         drawPhotographerNearCentre(g);
 
+        if(drawPersonNearPointOn)
+        {
+            drawPhotographerNearPoint(g);
+        }
         if(drawRedBuildingFlag)
         {
             drawRedBuilding(g);
@@ -100,11 +103,18 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         }
         drawRedPhotos(g);
         drawPhotographersNearRedBuilding(g);
-        drawPhotographerNearPoint(g);
 
         //////////////////////////////////Polygon code starting
         if(startDrawPolygon)
         {
+            if(isFindPhotoOn)
+            {
+                displayBuildingsOn = true;
+                displayPhotosOn = true;
+                displayPhotographersOn = true;
+//                drawPointOn = false;
+                drawPersonNearPointOn = false;
+            }
             int numPoints = polygonPointsList.size();
             if (numPoints == 0)
                 return; // nothing to draw
@@ -163,7 +173,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     public void mouseMoved(MouseEvent e) {
         trackPoint.x = e.getX();
         trackPoint.y = e.getY();
-        if(mouseMoveOn)
+//        if(mouseMoveOn)
         {repaint();}
 
     }
@@ -386,22 +396,16 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
             displayPhotographersOn = true;
             if(pointClicked != null)
             {
+                drawPersonNearPointOn = true;
                 photographerNearPoint = FrontEnd.getPhotographerNearPoint(pointClicked);
             }
-//            startDrawPolygon = true;
+            startDrawPolygon = true;
+//            drawPointOn = false;
+//            drawPersonNearPointOn = false;
+//            mouseMoveOn = true;
         }
-//                displayCircleAroundPoint = true;
     }
 
-    /*
-    Draw the Red building for Find Photographer query#5
-     */
-    private void drawRedBuilding(Graphics g)
-    {
-        redBuilding = FrontEnd.getBuilding(pointClicked);
-        g.setColor(Color.RED.darker());
-        g.drawPolygon(redBuilding);
-    }
 
     /*
    This method draws nearest photographer to the point for Find photos query#4
@@ -441,9 +445,8 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     public void mouseDragged(MouseEvent e)
     {
 
-        startDrawPolygon = true;
-//        drawPointOn = false;
-        repaint();
+//        startDrawPolygon = true;
+//        repaint();
 
     }
 
@@ -579,10 +582,23 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
             }
         } catch (NullPointerException e)
         {
-            System.out.println("There is no Photographer Near Centre and within Circle");
         }
     }
 
+    /*
+   Draw the Red building for Find Photographer query#5
+    */
+    private void drawRedBuilding(Graphics g)
+    {
+
+        try{
+        redBuilding = FrontEnd.getBuilding(pointClicked);
+        g.setColor(Color.RED.darker());
+        g.drawPolygon(redBuilding);
+        }catch(NullPointerException e)
+        {
+        }
+    }
 
     /*
     This method draws the photos near red building in query#5

@@ -137,11 +137,6 @@ public class FrontEnd extends JLabel {
 
         public void actionPerformed (ActionEvent e)
         {
-//            frame.remove(map);
-//            map = new DrawPolygon(new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"));
-//            frame.add(map);
-//            frame.setVisible(true);
-//            map.setVisible(true);
             DrawMap.displayBuildingsOn = false;
             DrawMap.displayPhotosOn = false;
             DrawMap.displayPhotographersOn = false;
