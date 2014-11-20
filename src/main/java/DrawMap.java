@@ -40,6 +40,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     private static boolean buildingNearCentreOn = false;
     private static boolean photoNearCentreOn = false;
     private static boolean photographerNearCentreOn = false;
+    private static boolean photosInPolygonByPhotographerOn = false;
 
 
     //////
@@ -60,7 +61,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     ///////
 
 
-
+  /* Constructor */
     public DrawMap(ImageIcon imageIcon)
     {
         super(imageIcon,SwingConstants.LEFT);
@@ -113,14 +114,14 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         //////////////////////////////////Polygon code starting
         if(startDrawPolygon)
         {
-            if(isFindPhotoOn)
-            {
-                displayBuildingsOn = true;
-                displayPhotosOn = true;
-                displayPhotographersOn = true;
+//            if(isFindPhotoOn)
+//            {
+//                displayBuildingsOn = true;
+//                displayPhotosOn = true;
+//                displayPhotographersOn = true;
 //                drawPointOn = false;
-                drawPersonNearPointOn = false;
-            }
+//                drawPersonNearPointOn = false;
+//            }
             int numPoints = polygonPointsList.size();
             if (numPoints == 0)
                 return; // nothing to draw
@@ -140,10 +141,10 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
                 draw(g, prevPoint, (Point) polygonPointsList.get(0));
             else
                 draw(g, prevPoint, trackPoint);
-//        startDrawPolygon = false;
         }
 
-        drawPhotosInPolygonByPerson(g);
+        if(photosInPolygonByPhotographerOn)
+        {drawPhotosInPolygonByPerson(g);}
 
     }
 
@@ -228,7 +229,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
 
 
     /*
-    this method sets the photographerLocation list
+    Sets the photographerLocation list
      */
     public static   void setAllPhotographerGeo(List<ArrayList<Integer>> allPhotographerGeo){
         DrawMap.allPhotographerGeo = allPhotographerGeo;
@@ -316,7 +317,8 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         DrawMap.greenFlagOn = b;
     }
 
-
+    /* Sets the boolean indicator to display photos inside polygon by photographer*/
+    public static void setPhotosInPolygonByPhotographerOn(boolean b ){photosInPolygonByPhotographerOn = b;}
 
     /*  Setter for red photos in Query#5 */
     public static void setDrawRedPhotosOn(Boolean b)

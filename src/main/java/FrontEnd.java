@@ -226,6 +226,7 @@ public class FrontEnd extends JLabel {
         DrawMap.setBuildingNearCentreOn(false);
         DrawMap.setPhotoNearCentreOn(false);
         DrawMap.setPhotographerNearCentreOn(false);
+        DrawMap.setPhotosInPolygonByPhotographerOn(false);
     }
 
     /*
@@ -471,6 +472,7 @@ public class FrontEnd extends JLabel {
         List<ArrayList<Integer>> photos = queryDatabase.getPhotosInPolygonForPhotographer(polygonCoordinates,photographerLocation);
         builder.append(QueryDatabase.databaseQuery);
         DrawMap.photoByPhotographerInPolygon = photos;
+        DrawMap.setPhotosInPolygonByPhotographerOn(true);
         viewQuery.setText(builder.toString());
         map.repaint();
     }

@@ -4,11 +4,6 @@ import java.util.List;
 
 public class Helper {
 
-    public static void main(String[] args) {
-//        List<Point> polyPoints = new ArrayList<Point>();
-//        System.out.println(helper.toStringPoint(p));
-//
-    }
 
     protected String toStringPolygon(java.util.List<Point> polygonPoints)
     {
