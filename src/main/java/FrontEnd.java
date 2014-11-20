@@ -22,7 +22,7 @@ public class FrontEnd extends JLabel {
     private JRadioButton point;
     private JRadioButton findPhoto;
     private JRadioButton findPhotographer;
-    private  JTextArea viewQuery;
+    private static JTextArea viewQuery;
     private Polygon poly;
     private JPanel panel;
     private JPanel panel1;
@@ -58,7 +58,6 @@ public class FrontEnd extends JLabel {
     private void setMap()
     {
         map = new DrawMap(new ImageIcon(path));
-//        map = new JLabel(new ImageIcon("/Users/deeksha/IdeaProjects/spatialdatabase/map.JPG"),SwingConstants.LEFT);
         map.setVerticalAlignment(SwingConstants.TOP);
         frame.add(map);
         map.setLayout(new FlowLayout());
@@ -202,11 +201,9 @@ public class FrontEnd extends JLabel {
     private void setQueryTextField()
     {
         viewQuery = new JTextArea("Query" , 5,50);
-//        viewQuery.setBounds(145, 51, 327, 53);
-//        viewQuery.setEditable(false);
+        viewQuery.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(viewQuery);
         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-//        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         frame.add(scrollPane);
         frame.setVisible(true);
     }
@@ -370,10 +367,19 @@ public class FrontEnd extends JLabel {
         Helper helper = new Helper();
         String centreCoordinates = helper.toStringPoint(DrawMap.getPointClicked());
         DrawMap.setGreenFlagOn(true);
+        StringBuilder builder = new StringBuilder();
         if(featureTypes.contains(FeatureType.BUILDING))
         {
              List<Polygon> polygonList = queryDatabase.getBuildingsWithinCircle(circleCoordinates);
+            if(polygonList.size() > 0)
+            {
+                builder.append(QueryDatabase.databaseQuery);
+            }
              Polygon buildingNearCentre = queryDatabase.getBuildingNearCentre(circleCoordinates,centreCoordinates);
+            if(buildingNearCentre != null)
+            {
+                builder.append(QueryDatabase.databaseQuery);
+            }
              DrawMap.setBuildingNearCentre(buildingNearCentre);
              DrawMap.setPolyList(polygonList);
              DrawMap.setDisplayBuildingsOn(true);
@@ -381,7 +387,15 @@ public class FrontEnd extends JLabel {
         if(featureTypes.contains(FeatureType.PHOTO))
         {
             List<ArrayList<Integer>>  photoPoints = queryDatabase.getPhotoWithinCircle(circleCoordinates);
+            if(photoPoints.size() > 0)
+            {
+                builder.append(QueryDatabase.databaseQuery);
+            }
             List<Integer> photoNearCentre = queryDatabase.getPhotoNearCentre(circleCoordinates,centreCoordinates);
+            if(photoNearCentre.size() > 0)
+            {
+                builder.append(QueryDatabase.databaseQuery);
+            }
             DrawMap.setPhotoNearCentre(photoNearCentre);
             DrawMap.setAllPhotoGeo(photoPoints);
             DrawMap.setDisplayPhotosOn(true);
@@ -389,12 +403,20 @@ public class FrontEnd extends JLabel {
         if(featureTypes.contains(FeatureType.PHOTOGRAPHER))
         {
             List<ArrayList<Integer>> photographerPoints = queryDatabase.getPhotographerWithinCircle(circleCoordinates);
+            if(photographerPoints.size() > 0)
+            {
+                builder.append(QueryDatabase.databaseQuery);
+            }
             List<Integer> photographerNearCentre = queryDatabase.getPhotographerNearCentre(circleCoordinates,centreCoordinates);
-
+            if(photographerNearCentre.size() > 0)
+            {
+                builder.append(QueryDatabase.databaseQuery);
+            }
             DrawMap.setPhotographerNearCentre(photographerNearCentre);
             DrawMap.setAllPhotographerGeo(photographerPoints);
             DrawMap.setDisplayPhotographersOn(true);
         }
+        viewQuery.setText(builder.toString());
         map.repaint();
         // turn off displayCircleAroundPoint
     }
@@ -409,7 +431,10 @@ public class FrontEnd extends JLabel {
         String pointCoordinates = helper.toStringPoint(p);
         QueryDatabase queryDatabase = new QueryDatabase();
         Point nearestPhotographer = queryDatabase.getPhotographerNearPoint(pointCoordinates);
-
+        if(nearestPhotographer != null)
+        {
+           viewQuery.setText(" Query: "+QueryDatabase.databaseQuery);
+        }
         return nearestPhotographer;
     }
 
@@ -422,8 +447,11 @@ public class FrontEnd extends JLabel {
         String photographerLocation = helper.toStringPoint(DrawMap.photographerNearPoint);
         String polygonCoordinates = helper.toStringPolygon(DrawMap.getPolygonPoints());
         List<ArrayList<Integer>> photos = queryDatabase.getPhotosInPolygonForPhotographer(polygonCoordinates,photographerLocation);
-        System.out.println("Photos found are : "+ photos);
         DrawMap.photoByPhotographerInPolygon = photos;
+        if(photos.size() > 0)
+        {
+            viewQuery.setText(QueryDatabase.databaseQuery);
+        }
         map.repaint();
     }
 
