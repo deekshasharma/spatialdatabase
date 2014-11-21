@@ -9,7 +9,6 @@ import javax.swing.*;
 public class FrontEnd extends JLabel {
 
     private JButton submitButton;
-    private JButton refreshButton;
     private JLabel activeFeature;
     private JLabel query;
     private JLabel map;
