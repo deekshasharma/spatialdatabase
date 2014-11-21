@@ -177,13 +177,11 @@ public class FrontEnd extends JLabel {
         public void actionPerformed(ActionEvent e)
         {
             clearMap();
-//            map.repaint();
             List<FeatureType> featureTypes = new ArrayList<FeatureType>();
             featureTypes.add(FeatureType.BUILDING);
             featureTypes.add(FeatureType.PHOTO);
             featureTypes.add(FeatureType.PHOTOGRAPHER);
             wholeSelected(featureTypes);
-//            DrawMap.setDrawPointOn(true);
             DrawMap.isFindPhotoOn = true;
         }
     }
@@ -196,13 +194,11 @@ public class FrontEnd extends JLabel {
         public void actionPerformed(ActionEvent e)
         {
             clearMap();
-            map.repaint();
             List<FeatureType> featureTypes = new ArrayList<FeatureType>();
             featureTypes.add(FeatureType.BUILDING);
             featureTypes.add(FeatureType.PHOTO);
             featureTypes.add(FeatureType.PHOTOGRAPHER);
             wholeSelected(featureTypes);
-            DrawMap.setDrawPointOn(true);
             DrawMap.isFindPhotographerOn = true;
         }
     }
@@ -216,6 +212,7 @@ public class FrontEnd extends JLabel {
         DrawMap.displayPhotographersOn = false;
         DrawMap.setDrawPointOn(false);
         DrawMap.displayCircleAroundPoint = false;
+        System.out.println("circle turned off");
         DrawMap.startDrawPolygon = false;
         DrawMap.mouseMoveOn = false;
         DrawMap.isFindPhotoOn = false;

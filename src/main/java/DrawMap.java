@@ -106,7 +106,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         if(drawRedBuildingOn)
         {
             drawRedBuilding(g);
-            drawRedBuildingOn = false;
+//            drawRedBuildingOn = false;
         }
         if(drawRedPhotosOn)
         {drawRedPhotos(g);}
@@ -411,11 +411,23 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         {
             setDrawPointOn(true);
             displayCircleAroundPoint = true;
+            System.out.println("circle turned on");
             repaint();
         }
         if(isFindPhotoOn)
         {
             setDrawPointOn(true);
+            setDisplayBuildingsOn(true);
+            setDisplayPhotosOn(true);
+            setDisplayPhotographersOn(true);
+            repaint();
+        }
+        if(isFindPhotographerOn)
+        {
+            setDrawPointOn(true);
+            setDisplayBuildingsOn(true);
+            setDisplayPhotosOn(true);
+            setDisplayPhotographersOn(true);
             repaint();
         }
     }
