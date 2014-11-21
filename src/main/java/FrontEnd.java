@@ -221,6 +221,7 @@ public class FrontEnd extends JLabel {
         DrawMap.drawRedBuildingOn = false;
         DrawMap.drawPersonNearPointOn = false;
         DrawMap.isRangeRadioOn = false;
+        DrawMap.isPointRadioOn = false;
         DrawMap.setDrawRedPhotosOn(false);
         DrawMap.setDrawRedPhotographersOn(false);
         DrawMap.setBuildingNearCentreOn(false);

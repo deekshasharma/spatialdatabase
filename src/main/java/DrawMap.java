@@ -411,7 +411,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         {
             setDrawPointOn(true);
             displayCircleAroundPoint = true;
-            System.out.println("circle turned on");
+            System.out.println("circle turned on first");
             repaint();
         }
         if(isFindPhotoOn)
