@@ -45,7 +45,6 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     public static boolean isPointRadioOn = false;
 
 
-    //////
     private boolean polygonIsNowComplete = false;
 
     /**
@@ -59,8 +58,6 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     private static ArrayList polygonPointsList = new ArrayList();
 
 
-
-    ///////
 
 
   /* Constructor */
@@ -113,17 +110,8 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         if(drawRedPhotographersOn)
         {drawPhotographersNearRedBuilding(g);}
 
-        //////////////////////////////////Polygon code starting
         if(startDrawPolygon)
         {
-//            if(isFindPhotoOn)
-//            {
-//                displayBuildingsOn = true;
-//                displayPhotosOn = true;
-//                displayPhotographersOn = true;
-//                drawPointOn = false;
-//                drawPersonNearPointOn = false;
-//            }
             int numPoints = polygonPointsList.size();
             if (numPoints == 0)
                 return; // nothing to draw
@@ -213,8 +201,6 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         g.fillOval(x2, y2, 8, 8);
     }
 
-
-    /////////////////////////////////////
 
     /* Setter Methods
 
@@ -393,15 +379,6 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
 
 
 
-//    @Override
-//    public void mousePressed(MouseEvent e) {
-//        int x = e.getX();
-//        int y = e.getY();
-//        pointClicked = new Point(x, y);
-//        if(drawPointOn)
-//        {repaint();}
-//    }
-
     @Override
     public void mousePressed(MouseEvent e) {
         int x = e.getX();
@@ -411,7 +388,6 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
         {
             setDrawPointOn(true);
             displayCircleAroundPoint = true;
-            System.out.println("circle turned on first");
             repaint();
         }
         if(isFindPhotoOn)
@@ -442,7 +418,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
             Double x = pointClicked.getX();
             Double y = pointClicked.getY();
             g.setColor(Color.RED);
-            g.fillOval(x.intValue(), y.intValue(), 8, 8);
+            g.fillRect(x.intValue(), y.intValue(), 8, 8);
         }
         if(isFindPhotographerOn)
         {

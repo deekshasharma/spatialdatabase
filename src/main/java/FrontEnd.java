@@ -211,7 +211,6 @@ public class FrontEnd extends JLabel {
         DrawMap.displayPhotographersOn = false;
         DrawMap.setDrawPointOn(false);
         DrawMap.displayCircleAroundPoint = false;
-        System.out.println("circle turned off");
         DrawMap.startDrawPolygon = false;
         DrawMap.mouseMoveOn = false;
         DrawMap.isFindPhotoOn = false;
