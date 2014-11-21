@@ -9,6 +9,7 @@ import javax.swing.*;
 public class FrontEnd extends JLabel {
 
     private JButton submitButton;
+    private JButton refreshButton;
     private JLabel activeFeature;
     private JLabel query;
     private JLabel map;
@@ -152,8 +153,8 @@ public class FrontEnd extends JLabel {
         public void actionPerformed (ActionEvent e)
         {
             clearMap();
-            DrawMap.startDrawPolygon = true;
             map.repaint();
+            DrawMap.isRangeRadioOn = true;
         }
     }
 
@@ -163,9 +164,9 @@ public class FrontEnd extends JLabel {
     class pointRadioAction implements ActionListener{
        public void  actionPerformed(ActionEvent e)
        {
-           DrawMap.setDrawPointOn(true);
-           DrawMap.displayCircleAroundPoint = true;
-//           map.repaint();
+           clearMap();
+           map.repaint();
+           DrawMap.isPointRadioOn = true;
        }
    }
 
@@ -175,6 +176,8 @@ public class FrontEnd extends JLabel {
     class photoRadioAction implements ActionListener{
         public void actionPerformed(ActionEvent e)
         {
+            clearMap();
+            map.repaint();
             List<FeatureType> featureTypes = new ArrayList<FeatureType>();
             featureTypes.add(FeatureType.BUILDING);
             featureTypes.add(FeatureType.PHOTO);
@@ -188,7 +191,6 @@ public class FrontEnd extends JLabel {
     /*
    Action class for Find Photographer radio button
      */
-
     class photographerRadioAction implements ActionListener{
 
         public void actionPerformed(ActionEvent e)
@@ -206,13 +208,13 @@ public class FrontEnd extends JLabel {
     }
 
 
-
+    /* This method clears the map*/
     protected void clearMap()
     {
         DrawMap.displayBuildingsOn = false;
         DrawMap.displayPhotosOn = false;
         DrawMap.displayPhotographersOn = false;
-        DrawMap.drawPointOn = false;
+        DrawMap.setDrawPointOn(false);
         DrawMap.displayCircleAroundPoint = false;
         DrawMap.startDrawPolygon = false;
         DrawMap.mouseMoveOn = false;
@@ -221,6 +223,7 @@ public class FrontEnd extends JLabel {
         DrawMap.greenFlagOn = false;
         DrawMap.drawRedBuildingOn = false;
         DrawMap.drawPersonNearPointOn = false;
+        DrawMap.isRangeRadioOn = false;
         DrawMap.setDrawRedPhotosOn(false);
         DrawMap.setDrawRedPhotographersOn(false);
         DrawMap.setBuildingNearCentreOn(false);
@@ -229,6 +232,25 @@ public class FrontEnd extends JLabel {
         DrawMap.setPhotosInPolygonByPhotographerOn(false);
     }
 
+//    private void addRefresh()
+//    {
+//          refreshButton = new JButton("Refresh");
+//        frame.add(refreshButton);
+//        frame.setVisible(true);
+//        refreshButton.addActionListener( new RefreshButtonListener());
+//    }
+//
+//    private class  RefreshButtonListener implements ActionListener
+//    {
+//        public void actionPerformed(ActionEvent e)
+//        {
+//            e.getActionCommand();
+//
+//            clearMap();
+//            map.repaint();
+//        }
+//    }
+
     /*
     Submit button functionality
      */
@@ -236,7 +258,7 @@ public class FrontEnd extends JLabel {
     {
         submitButton = new JButton("Submit Query");
         frame.add(submitButton);
-        submitButton.addActionListener(new submitButtonListener());
+        submitButton.addActionListener(new SubmitButtonListener());
         frame.setVisible(true);
     }
 
@@ -244,7 +266,7 @@ public class FrontEnd extends JLabel {
     /*
     This methods directs the actions of submit button
      */
-    private class submitButtonListener implements ActionListener
+    private class SubmitButtonListener implements ActionListener
     {
               public void actionPerformed(ActionEvent e)
               {
@@ -442,7 +464,6 @@ public class FrontEnd extends JLabel {
         }
         viewQuery.setText(builder.toString());
         map.repaint();
-        // turn off displayCircleAroundPoint
     }
 
 
@@ -459,7 +480,7 @@ public class FrontEnd extends JLabel {
     }
 
     /*
-        This is called when Find Photos query#4 is selected and submitted
+        This is called when Find Photo is selected and submitted query#4
      */
     private void findPhotoSelected()
     {

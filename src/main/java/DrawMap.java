@@ -14,7 +14,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     private static List<ArrayList<Integer>> allPhotographerGeo;
     public static List<Polygon> rangePolygon;
     private static Point pointClicked;
-    public static boolean drawPointOn = false;
+    private static boolean drawPointOn = false;
     public static boolean displayBuildingsOn = false;
     public static boolean displayPhotosOn = false;
     public static boolean displayPhotographersOn = false;
@@ -41,6 +41,8 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     private static boolean photoNearCentreOn = false;
     private static boolean photographerNearCentreOn = false;
     private static boolean photosInPolygonByPhotographerOn = false;
+    public static boolean isRangeRadioOn = false;
+    public static boolean isPointRadioOn = false;
 
 
     //////
@@ -153,27 +155,31 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     @Override
     public void mouseClicked(MouseEvent e)
     {
-        int x = e.getX();
-        int y = e.getY();
+        if(isRangeRadioOn) {
+            startDrawPolygon = true;
+            mouseMoveOn = true;
+            int x = e.getX();
+            int y = e.getY();
 
-        switch (e.getClickCount()) {
-            case 1: // single-click
-                if (polygonIsNowComplete) {
-                    polygonPointsList.clear();
-                    polygonIsNowComplete = false;
-                }
-                polygonPointsList.add(new Point(x, y));
-                repaint();
-                break;
+            switch (e.getClickCount()) {
+                case 1: // single-click
+                    if (polygonIsNowComplete) {
+                        polygonPointsList.clear();
+                        polygonIsNowComplete = false;
+                    }
+                    polygonPointsList.add(new Point(x, y));
+                    repaint();
+                    break;
 
-            case 2: // double-click
-                polygonIsNowComplete = true;
-                polygonPointsList.add(new Point(x, y));
-                repaint();
-                break;
+                case 2: // double-click
+                    polygonIsNowComplete = true;
+                    polygonPointsList.add(new Point(x, y));
+                    repaint();
+                    break;
 
-            default: // ignore anything else
-                break;
+                default: // ignore anything else
+                    break;
+            }
         }
     }
 
@@ -182,7 +188,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     public void mouseMoved(MouseEvent e) {
         trackPoint.x = e.getX();
         trackPoint.y = e.getY();
-//        if(mouseMoveOn)
+        if(mouseMoveOn)
         {repaint();}
 
     }
@@ -387,15 +393,27 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
 
 
 
+//    @Override
+//    public void mousePressed(MouseEvent e) {
+//        int x = e.getX();
+//        int y = e.getY();
+//        pointClicked = new Point(x, y);
+//        if(drawPointOn)
+//        {repaint();}
+//    }
+
     @Override
     public void mousePressed(MouseEvent e) {
+        if(isPointRadioOn)
+        {
+        setDrawPointOn(true);
         int x = e.getX();
         int y = e.getY();
         pointClicked = new Point(x, y);
-        if(drawPointOn)
-        {repaint();}
+        displayCircleAroundPoint = true;
+        repaint();
+        }
     }
-
 
     /*
     This method draw the point on the map for Point Query#3,4,5
