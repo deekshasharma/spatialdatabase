@@ -155,7 +155,7 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
     @Override
     public void mouseClicked(MouseEvent e)
     {
-        if(isRangeRadioOn) {
+        if(isRangeRadioOn || isFindPhotoOn) {
             startDrawPolygon = true;
             mouseMoveOn = true;
             int x = e.getX();
@@ -404,14 +404,19 @@ public class DrawMap extends JLabel implements MouseListener, MouseMotionListene
 
     @Override
     public void mousePressed(MouseEvent e) {
-        if(isPointRadioOn)
-        {
-        setDrawPointOn(true);
         int x = e.getX();
         int y = e.getY();
         pointClicked = new Point(x, y);
-        displayCircleAroundPoint = true;
-        repaint();
+        if(isPointRadioOn)
+        {
+            setDrawPointOn(true);
+            displayCircleAroundPoint = true;
+            repaint();
+        }
+        if(isFindPhotoOn)
+        {
+            setDrawPointOn(true);
+            repaint();
         }
     }
 

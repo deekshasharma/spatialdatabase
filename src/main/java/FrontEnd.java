@@ -177,13 +177,13 @@ public class FrontEnd extends JLabel {
         public void actionPerformed(ActionEvent e)
         {
             clearMap();
-            map.repaint();
+//            map.repaint();
             List<FeatureType> featureTypes = new ArrayList<FeatureType>();
             featureTypes.add(FeatureType.BUILDING);
             featureTypes.add(FeatureType.PHOTO);
             featureTypes.add(FeatureType.PHOTOGRAPHER);
             wholeSelected(featureTypes);
-            DrawMap.setDrawPointOn(true);
+//            DrawMap.setDrawPointOn(true);
             DrawMap.isFindPhotoOn = true;
         }
     }
@@ -231,25 +231,6 @@ public class FrontEnd extends JLabel {
         DrawMap.setPhotographerNearCentreOn(false);
         DrawMap.setPhotosInPolygonByPhotographerOn(false);
     }
-
-//    private void addRefresh()
-//    {
-//          refreshButton = new JButton("Refresh");
-//        frame.add(refreshButton);
-//        frame.setVisible(true);
-//        refreshButton.addActionListener( new RefreshButtonListener());
-//    }
-//
-//    private class  RefreshButtonListener implements ActionListener
-//    {
-//        public void actionPerformed(ActionEvent e)
-//        {
-//            e.getActionCommand();
-//
-//            clearMap();
-//            map.repaint();
-//        }
-//    }
 
     /*
     Submit button functionality
